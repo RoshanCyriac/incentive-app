@@ -1,128 +1,88 @@
-# Production Docker Compose Configuration
-# Extends docker-compose.yml with production-specific settings
-# Usage: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
-#
-# Key Changes:
-# - Removes local postgres service (use RDS in production)
-# - Removes volume mounts for hot reload
-# - Adds resource limits and restart policies
-# - Adds logging configuration
-# - Removes development-only ports
-
 version: '3.9'
 
 services:
-  # Remove postgres service for production (use RDS instead)
-  # Uncomment and configure the following if you need external DB connectivity:
-  # db-proxy:
-  #   image: alpine
-  #   command: sleep infinity
-  #   networks:
-  #     - incentive_network
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: incentive_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - incentive_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   backend:
-    # Override: Remove development command, use production
-    command: uvicorn main:app --host 0.0.0.0 --port 8000
-    
-    # No longer depends on local postgres in production
-    depends_on: []
-    
-    # Remove volume mount for source code (use built image only)
-    volumes: []
-    
-    # Remove direct port exposure (only via nginx)
-    ports: []
-    
-    # Production environment
-    environment:
-      ENVIRONMENT: production
-      # DATABASE_URL should be set in .env.prod pointing to RDS
-      # Example: postgresql://user:password@rds-endpoint.amazonaws.com/incentive_db
-    
-    # Resource limits
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 512M
-        reservations:
-          cpus: '0.25'
-          memory: 256M
-    
-    # Restart policy for production
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: incentive_backend
     restart: always
-    
-    # Logging configuration
+    env_file: .env
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --workers 2
+    depends_on:
+      postgres:
+        condition: service_healthy        # waits for postgres to be ready
+    expose:
+      - "8000"                            # internal only, not to outside
+    networks:
+      - incentive_network
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "3"
-    
-    networks:
-      - incentive_network
 
   frontend:
-    # Remove development volume mounts
-    volumes: []
-    
-    # Remove direct port exposure (only via nginx)
-    ports: []
-    
-    # No dependency on backend service at compose level
-    depends_on: []
-    
-    # Resource limits
-    deploy:
-      resources:
-        limits:
-          cpus: '0.25'
-          memory: 256M
-        reservations:
-          cpus: '0.125'
-          memory: 128M
-    
-    # Restart policy for production
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile              # multi-stage, outputs built static files
+    container_name: incentive_frontend
     restart: always
-    
-    # Logging configuration
+    expose:
+      - "80"
+    networks:
+      - incentive_network
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "3"
-    
-    networks:
-      - incentive_network
 
   nginx:
-    # Remove development ports (only expose 80/443 via load balancer)
-    ports:
-      - "80:80"
-      - "443:443"
-    
-    # Resource limits
-    deploy:
-      resources:
-        limits:
-          cpus: '0.25'
-          memory: 256M
-        reservations:
-          cpus: '0.125'
-          memory: 128M
-    
-    # Restart policy for production
+    image: nginx:alpine
+    container_name: incentive_nginx
     restart: always
-    
-    # Logging configuration
+    ports:
+      - "80:80"                           # only this is exposed to internet
+    volumes:
+      - ./infrastructure/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - incentive_network
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "3"
-    
-    networks:
-      - incentive_network
+
+volumes:
+  postgres_data:
 
 networks:
   incentive_network:
