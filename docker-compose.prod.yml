@@ -49,7 +49,9 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile              # multi-stage, outputs built static files
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://51.21.150.176/api              # multi-stage, outputs built static files
     container_name: incentive_frontend
     restart: always
     expose:
