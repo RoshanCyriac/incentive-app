@@ -28,8 +28,8 @@ if not SECRET_KEY:
     # Use a default secret for testing
     SECRET_KEY = "test-secret-key-do-not-use-in-production"
 
-# Password hashing context
-pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
+# Password hashing context - bcrypt for compatibility with existing hashes
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # HTTP Bearer security scheme
 security = HTTPBearer()
@@ -59,6 +59,8 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     Returns:
         True if password matches, False otherwise
     """
+    # Strip whitespace from hashed_password as safety measure
+    hashed_password = hashed_password.strip()
     return pwd_context.verify(plain_password, hashed_password)
 
 
