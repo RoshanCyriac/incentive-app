@@ -18,22 +18,30 @@ depends_on = None
 
 def upgrade() -> None:
     """Insert seed data"""
+    from passlib.context import CryptContext
+    
+    # Initialize password context
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+    
+    # Generate hashed password at runtime
+    hashed_password = pwd_context.hash("Admin@123")
     
     # Admin user ID (fixed for reference)
     admin_id = str(uuid4())
     
-    # Insert admin user
-    # Password: Admin@123 (bcrypt hashed)
+    # Insert admin user with generated password hash
+    # Use ON CONFLICT to prevent duplicate inserts on re-runs
     op.execute(f"""
         INSERT INTO users (id, name, email, password_hash, role, is_active)
         VALUES (
             '{admin_id}',
             'System Admin',
             'admin@incentive.com',
-            '$2b$12$gpyaQukgHaXrgSunMvi7fe/fBohA3lHuRWWDMzjIKrCziL9hNT1PG',
+            '{hashed_password}',
             'admin',
             true
         )
+        ON CONFLICT (email) DO NOTHING
     """)
     
     # Insert car models
