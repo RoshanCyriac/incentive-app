@@ -1,0 +1,129 @@
+# Production Docker Compose Configuration
+# Extends docker-compose.yml with production-specific settings
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Key Changes:
+# - Removes local postgres service (use RDS in production)
+# - Removes volume mounts for hot reload
+# - Adds resource limits and restart policies
+# - Adds logging configuration
+# - Removes development-only ports
+
+version: '3.9'
+
+services:
+  # Remove postgres service for production (use RDS instead)
+  # Uncomment and configure the following if you need external DB connectivity:
+  # db-proxy:
+  #   image: alpine
+  #   command: sleep infinity
+  #   networks:
+  #     - incentive_network
+
+  backend:
+    # Override: Remove development command, use production
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    
+    # No longer depends on local postgres in production
+    depends_on: []
+    
+    # Remove volume mount for source code (use built image only)
+    volumes: []
+    
+    # Remove direct port exposure (only via nginx)
+    ports: []
+    
+    # Production environment
+    environment:
+      ENVIRONMENT: production
+      # DATABASE_URL should be set in .env.prod pointing to RDS
+      # Example: postgresql://user:password@rds-endpoint.amazonaws.com/incentive_db
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    
+    # Restart policy for production
+    restart: always
+    
+    # Logging configuration
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    networks:
+      - incentive_network
+
+  frontend:
+    # Remove development volume mounts
+    volumes: []
+    
+    # Remove direct port exposure (only via nginx)
+    ports: []
+    
+    # No dependency on backend service at compose level
+    depends_on: []
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+        reservations:
+          cpus: '0.125'
+          memory: 128M
+    
+    # Restart policy for production
+    restart: always
+    
+    # Logging configuration
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    networks:
+      - incentive_network
+
+  nginx:
+    # Remove development ports (only expose 80/443 via load balancer)
+    ports:
+      - "80:80"
+      - "443:443"
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+        reservations:
+          cpus: '0.125'
+          memory: 128M
+    
+    # Restart policy for production
+    restart: always
+    
+    # Logging configuration
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    networks:
+      - incentive_network
+
+networks:
+  incentive_network:
+    driver: bridge
