@@ -124,6 +124,30 @@ async def get_available_cars(
     return car_models
 
 
+# ==================== Slab Rules Endpoint ====================
+@router.get("/slabs", response_model=List[SlabRuleResponse])
+async def get_slabs(
+    officer: User = Depends(require_officer), db: Session = Depends(get_db)
+):
+    """
+    Get all active slab rules ordered by minimum quantity ascending.
+
+    Args:
+        officer: Officer user (validated by require_officer dependency)
+        db: Database session
+
+    Returns:
+        List of active slabs ordered by min_qty ascending
+    """
+    slabs = (
+        db.query(SlabRule)
+        .filter(SlabRule.is_active == True)
+        .order_by(SlabRule.min_qty.asc())
+        .all()
+    )
+    return slabs
+
+
 # ==================== Sales Entry Endpoints ====================
 @router.get("/sales", response_model=List[SalesEntryResponse])
 async def get_sales(

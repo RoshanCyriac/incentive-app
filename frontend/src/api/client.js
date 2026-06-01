@@ -107,6 +107,14 @@ export const getSlabs = () => {
 };
 
 /**
+ * Get all active slab rules for officer dashboard
+ * @returns {Promise} List of slab rules
+ */
+export const getOfficerSlabs = () => {
+  return client.get('/officer/slabs');
+};
+
+/**
  * Create a new slab rule
  * @param {object} data - Slab rule data (min_qty, max_qty, incentive_per_car)
  * @returns {Promise} Created slab rule

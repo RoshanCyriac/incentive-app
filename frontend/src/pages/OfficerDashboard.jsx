@@ -5,7 +5,7 @@ import {
   getSales,
   upsertSale,
   getIncentive,
-  getSlabs,
+  getOfficerSlabs,
   getHistory,
 } from '../api/client';
 
@@ -54,7 +54,7 @@ export default function OfficerDashboard() {
       const [carsRes, salesRes, slabsRes, incentiveRes, historyRes] = await Promise.all([
         getOfficerCars(),
         getSales(month, year),
-        getSlabs(),
+        getOfficerSlabs(),
         getIncentive(month, year),
         getHistory(),
       ]);
