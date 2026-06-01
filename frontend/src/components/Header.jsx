@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconMenu, IconCar } from './icons';
+import { IconMenu, IconCar, IconChevronLeft } from './icons';
 
 export default function Header({
   title,
@@ -10,10 +10,23 @@ export default function Header({
   rightContent,
   userInitials,
   onMenuClick,
+  onBackToLogin,
 }) {
   return (
     <header className="app-header">
       <div className="flex items-center gap-2 min-w-0 flex-1">
+        {onBackToLogin && (
+          <button
+            type="button"
+            onClick={onBackToLogin}
+            className="app-header-back-btn shrink-0"
+            aria-label="Back to login"
+          >
+            <IconChevronLeft size={18} />
+            <span className="app-header-back-label">Back</span>
+          </button>
+        )}
+
         {onMenuClick && (
           <button
             type="button"

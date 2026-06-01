@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '../context/AuthContext';
 import Sidebar from './Sidebar';
 import BottomNav from './BottomNav';
 import Header from './Header';
@@ -20,6 +21,7 @@ export default function DashboardLayout({
   headerRightContent,
   children,
 }) {
+  const { logout } = useAuth();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const closeMobileNav = useCallback(() => setMobileNavOpen(false), []);
@@ -76,6 +78,7 @@ export default function DashboardLayout({
           userInitials={userInitials}
           rightContent={headerRightContent}
           onMenuClick={() => setMobileNavOpen(true)}
+          onBackToLogin={logout}
         />
 
         <main className="dashboard-main">{children}</main>

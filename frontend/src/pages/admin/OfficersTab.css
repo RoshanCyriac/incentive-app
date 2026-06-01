@@ -70,7 +70,7 @@
 
 .officers-table {
   width: 100%;
-  min-width: 560px;
+  min-width: 480px;
   border-collapse: collapse;
   table-layout: fixed;
 }
@@ -113,19 +113,15 @@
 }
 
 .officers-col-name {
-  width: 32%;
+  width: 38%;
 }
 
 .officers-col-email {
-  width: 34%;
+  width: 44%;
 }
 
 .officers-col-status {
-  width: 14%;
-}
-
-.officers-col-joined {
-  width: 20%;
+  width: 18%;
 }
 
 .officers-name-cell {
@@ -161,12 +157,6 @@
   color: #666;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.officers-joined {
-  color: #666;
-  font-size: 13px;
   white-space: nowrap;
 }
 
@@ -214,23 +204,9 @@
   overflow: visible;
 }
 
-@media (min-width: 640px) and (max-width: 1023px) {
-  .officers-table {
-    min-width: 640px;
-  }
-
-  .officers-col-name {
-    width: 30%;
-  }
-
-  .officers-col-email {
-    width: 36%;
-  }
-}
-
 @media (max-width: 639px) {
   .officers-table {
-    min-width: 520px;
+    min-width: 440px;
   }
 
   .officers-table th,

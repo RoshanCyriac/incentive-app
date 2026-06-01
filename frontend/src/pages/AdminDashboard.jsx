@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { DashboardLayout } from '../components';
-import {
-  IconLayoutGrid,
-  IconCar,
-  IconBarChart,
-  IconUsers,
-  IconSettings,
-} from '../components/icons';
+import { IconCar, IconBarChart, IconUsers } from '../components/icons';
 import {
   getUserDisplayName,
   getUserInitials,
@@ -18,19 +12,15 @@ import SlabEngineTab from './admin/SlabEngineTab';
 import OfficersTab from './admin/OfficersTab';
 
 const NAV_ITEMS = [
-  { id: 'dashboard', label: 'Dashboard', shortLabel: 'Home', icon: IconLayoutGrid },
   { id: 'cars', label: 'Car Inventory', shortLabel: 'Cars', icon: IconCar },
   { id: 'slabs', label: 'Incentive Slabs', shortLabel: 'Slabs', icon: IconBarChart },
   { id: 'officers', label: 'Sales Officers', shortLabel: 'Team', icon: IconUsers },
-  { id: 'settings', label: 'Settings', shortLabel: 'Settings', icon: IconSettings },
 ];
 
 const TAB_HEADERS = {
-  dashboard: { title: 'Dashboard', breadcrumb: 'Admin → Dashboard' },
   cars: { title: 'Car Inventory', breadcrumb: 'Admin → Car Inventory', icon: IconCar },
   slabs: { title: 'Incentive Slabs', breadcrumb: 'Admin → Incentive Slabs', icon: IconBarChart },
   officers: { title: 'Sales Officers', breadcrumb: 'Admin → Sales Officers', icon: IconUsers },
-  settings: { title: 'Settings', breadcrumb: 'Admin → Settings', icon: IconSettings },
 };
 
 export default function AdminDashboard() {
@@ -46,11 +36,7 @@ export default function AdminDashboard() {
     if (activeTab === 'cars') return <CarInventoryTab />;
     if (activeTab === 'slabs') return <SlabEngineTab />;
     if (activeTab === 'officers') return <OfficersTab />;
-    return (
-      <div className="bg-white flex items-center justify-center px-4 text-center rounded-xl border border-[#E5E5E5] min-h-[200px] text-[#999] text-sm">
-        {TAB_HEADERS[activeTab]?.title} — coming soon
-      </div>
-    );
+    return <CarInventoryTab />;
   };
 
   return (

@@ -11,17 +11,6 @@ import {
 import { IconPlus } from '../../components/icons';
 import './OfficersTab.css';
 
-function formatJoinedDate(value) {
-  if (value == null || value === '') return '—';
-  const date = value instanceof Date ? value : new Date(value);
-  if (Number.isNaN(date.getTime())) return '—';
-  return date.toLocaleDateString('en-IN', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
-}
-
 function OfficerStatusBadge({ active }) {
   const className = active
     ? 'officers-status-badge officers-status-badge--active'
@@ -123,7 +112,7 @@ export default function OfficersTab() {
           <div className="h-9 w-32 rounded-md bg-[#f4f4f4] animate-pulse" />
         </div>
         <div className="officers-card p-4">
-          <SkeletonLoader rows={5} columns={4} />
+          <SkeletonLoader rows={5} columns={3} />
         </div>
       </div>
     );
@@ -154,7 +143,6 @@ export default function OfficersTab() {
                   <th className="officers-col-name">Name</th>
                   <th className="officers-col-email">Email</th>
                   <th className="officers-col-status">Status</th>
-                  <th className="officers-col-joined">Joined</th>
                 </tr>
               </thead>
               <tbody>
@@ -171,9 +159,6 @@ export default function OfficersTab() {
                     <td className="officers-email">{officer.email}</td>
                     <td className="officers-status-cell">
                       <OfficerStatusBadge active={officer.is_active !== false} />
-                    </td>
-                    <td className="officers-joined">
-                      {formatJoinedDate(officer.created_at)}
                     </td>
                   </tr>
                 ))}
