@@ -243,13 +243,13 @@ export default function CarInventoryTab() {
       >
         {/* Toolbar */}
         <div
-          className="flex flex-wrap items-center justify-between gap-3"
+          className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
           style={{
             padding: '14px 16px',
             borderBottom: '0.5px solid #F0F0F0',
           }}
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <span style={{ fontSize: '14px', fontWeight: 500, color: '#1A1A1A' }}>
               Car Models
             </span>
@@ -266,8 +266,8 @@ export default function CarInventoryTab() {
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="relative">
+          <div className="flex flex-col gap-2 w-full sm:flex-row sm:items-center sm:w-auto sm:gap-2">
+            <div className="relative w-full sm:w-[180px]">
               <span
                 className="absolute flex items-center pointer-events-none"
                 style={{ left: '9px', top: '50%', transform: 'translateY(-50%)', color: '#888' }}
@@ -279,9 +279,8 @@ export default function CarInventoryTab() {
                 placeholder="Search models..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="outline-none transition-colors"
+                className="outline-none transition-colors w-full"
                 style={{
-                  width: '180px',
                   border: '0.5px solid #E0E0E0',
                   borderRadius: '6px',
                   padding: '6px 10px 6px 30px',
@@ -302,7 +301,7 @@ export default function CarInventoryTab() {
             <button
               type="button"
               onClick={() => handleOpenModal()}
-              className="inline-flex items-center gap-1.5 transition-colors"
+              className="inline-flex items-center justify-center gap-1.5 transition-colors w-full sm:w-auto"
               style={{
                 backgroundColor: '#EB0A1E',
                 color: '#fff',
@@ -328,10 +327,10 @@ export default function CarInventoryTab() {
         {cars.length > 0 ? (
           <>
             {filteredCars.length > 0 ? (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto -mx-px">
                 <table
-                  className="w-full"
-                  style={{ borderCollapse: 'collapse', width: '100%' }}
+                  className="w-full min-w-[640px]"
+                  style={{ borderCollapse: 'collapse' }}
                 >
                   <thead style={{ backgroundColor: '#FAFAFA' }}>
                     <tr>
@@ -444,11 +443,11 @@ export default function CarInventoryTab() {
                             }}
                             className="group-hover:bg-[#FFF8F8]"
                           >
-                            <div className="flex items-center" style={{ gap: '6px' }}>
+                            <div className="flex flex-wrap items-center" style={{ gap: '6px' }}>
                               <button
                                 type="button"
                                 onClick={() => handleOpenModal(car)}
-                                className="inline-flex items-center gap-1 transition-colors"
+                                className="inline-flex items-center gap-1 transition-colors whitespace-nowrap"
                                 style={{
                                   border: '0.5px solid #D0D0D0',
                                   borderRadius: '5px',
@@ -514,18 +513,18 @@ export default function CarInventoryTab() {
 
             {/* Footer */}
             <div
-              className="flex flex-wrap items-center justify-between gap-3"
+              className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
               style={{
                 padding: '10px 16px',
                 borderTop: '0.5px solid #F0F0F0',
                 backgroundColor: '#FAFAFA',
               }}
             >
-              <span style={{ fontSize: '12px', color: '#999' }}>
+              <span className="text-center sm:text-left" style={{ fontSize: '12px', color: '#999' }}>
                 Showing {paginatedCars.length} of {filteredCars.length} models
               </span>
 
-              <div className="flex items-center gap-1">
+              <div className="flex items-center justify-center gap-1 flex-wrap">
                 <PaginationBtn
                   label="‹"
                   disabled={currentPage <= 1}

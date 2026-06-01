@@ -1,18 +1,32 @@
 import React from 'react';
-import { IconCar } from './icons';
+import { IconCar, IconX } from './icons';
 
 /**
- * Fixed admin sidebar (220px)
+ * Admin/officer sidebar — fixed on desktop, drawer on mobile
  */
-export default function Sidebar({ items, activeItem, onItemClick, userSection }) {
+export default function Sidebar({
+  items,
+  activeItem,
+  onItemClick,
+  userSection,
+  mobileOpen = false,
+  onMobileClose,
+}) {
   return (
     <aside
-      className="flex flex-col h-screen shrink-0"
-      style={{ width: '220px', backgroundColor: '#1A1A1A' }}
+      className={[
+        'flex flex-col h-full shrink-0 z-50',
+        'fixed inset-y-0 left-0 w-[min(280px,88vw)]',
+        'transition-transform duration-300 ease-out',
+        'lg:static lg:w-[220px] lg:translate-x-0',
+        mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
+      ].join(' ')}
+      style={{ backgroundColor: '#1A1A1A' }}
+      aria-hidden={!mobileOpen ? undefined : false}
     >
       {/* Logo */}
       <div
-        className="flex items-center gap-2.5"
+        className="flex items-center gap-2.5 relative"
         style={{
           padding: '18px 16px',
           borderBottom: '1px solid rgba(255,255,255,0.08)',
@@ -29,7 +43,7 @@ export default function Sidebar({ items, activeItem, onItemClick, userSection })
         >
           <IconCar size={16} className="text-white" />
         </div>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p
             className="text-white leading-tight"
             style={{ fontSize: '13.5px', fontWeight: 500 }}
@@ -43,10 +57,18 @@ export default function Sidebar({ items, activeItem, onItemClick, userSection })
             Incentive Calculator
           </p>
         </div>
+        <button
+          type="button"
+          onClick={onMobileClose}
+          className="lg:hidden flex items-center justify-center shrink-0 p-1 rounded text-white/60 hover:text-white hover:bg-white/10"
+          aria-label="Close menu"
+        >
+          <IconX size={18} />
+        </button>
       </div>
 
       {/* Navigation */}
-      <nav style={{ padding: '10px 8px' }} className="flex-1 overflow-y-auto">
+      <nav style={{ padding: '10px 8px' }} className="flex-1 overflow-y-auto overscroll-contain">
         {items.map((item) => {
           const isActive = activeItem === item.id;
           const NavIcon = item.icon;
@@ -87,13 +109,12 @@ export default function Sidebar({ items, activeItem, onItemClick, userSection })
               }}
             >
               {iconNode}
-              <span>{item.label}</span>
+              <span className="text-left">{item.label}</span>
             </button>
           );
         })}
       </nav>
 
-      {/* User section */}
       {userSection && (
         <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>{userSection}</div>
       )}

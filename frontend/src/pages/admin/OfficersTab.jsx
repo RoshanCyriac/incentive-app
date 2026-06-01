@@ -88,9 +88,9 @@ export default function OfficersTab() {
   if (loading) {
     return (
       <div>
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-6">
           <h2 className="text-xl font-header text-charcoal">Sales Officers</h2>
-          <div className="w-32 h-10 bg-off-white rounded-md shimmer"></div>
+          <div className="w-full sm:w-32 h-10 bg-off-white rounded-md shimmer"></div>
         </div>
         <div className="card">
           <SkeletonLoader rows={5} columns={4} />
@@ -107,17 +107,17 @@ export default function OfficersTab() {
         </div>
       )}
 
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-6">
         <h2 className="text-xl font-header text-charcoal">Sales Officers</h2>
-        <Button variant="primary" onClick={() => setShowModal(true)}>
+        <Button variant="primary" onClick={() => setShowModal(true)} className="w-full sm:w-auto">
           ➕ Create Officer
         </Button>
       </div>
 
       {/* Table */}
       {officers.length > 0 ? (
-        <div className="table-container">
-          <table className="w-full">
+        <div className="table-container overflow-x-auto">
+          <table className="w-full min-w-[520px]">
             <thead className="table-header sticky top-0">
               <tr>
                 <th className="table-header-cell">Name</th>

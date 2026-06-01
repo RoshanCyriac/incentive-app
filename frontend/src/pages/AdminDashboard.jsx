@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Sidebar, Header } from '../components';
+import { DashboardLayout } from '../components';
 import {
   IconLayoutGrid,
   IconCar,
@@ -68,7 +68,7 @@ export default function AdminDashboard() {
           {displayName}
         </p>
         <p
-          className="truncate leading-tight capitalize"
+          className="truncate leading-tight"
           style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}
         >
           {roleLabel}
@@ -106,7 +106,7 @@ export default function AdminDashboard() {
     if (activeTab === 'officers') return <OfficersTab />;
     return (
       <div
-        className="bg-white flex items-center justify-center"
+        className="bg-white flex items-center justify-center px-4 text-center"
         style={{
           border: '0.5px solid #E5E5E5',
           borderRadius: '10px',
@@ -121,33 +121,18 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div
-      className="flex h-screen overflow-hidden font-sans"
-      style={{ backgroundColor: '#F4F4F4', fontFamily: 'Inter, system-ui, sans-serif' }}
+    <DashboardLayout
+      sidebarItems={NAV_ITEMS}
+      activeItem={activeTab}
+      onItemClick={setActiveTab}
+      userSection={userSection}
+      headerTitle={headerMeta.title}
+      headerTitleIcon={TitleIcon ? <TitleIcon size={16} /> : null}
+      headerBreadcrumb={headerMeta.breadcrumb}
+      welcomeName={displayName}
+      roleBadge={roleLabel}
     >
-      <Sidebar
-        items={NAV_ITEMS}
-        activeItem={activeTab}
-        onItemClick={setActiveTab}
-        userSection={userSection}
-      />
-
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <Header
-          title={headerMeta.title}
-          titleIcon={TitleIcon ? <TitleIcon size={16} /> : null}
-          breadcrumb={headerMeta.breadcrumb}
-          welcomeName={displayName}
-          roleBadge={roleLabel}
-        />
-
-        <main
-          className="flex-1 overflow-auto"
-          style={{ padding: '20px 24px' }}
-        >
-          {renderContent()}
-        </main>
-      </div>
-    </div>
+      {renderContent()}
+    </DashboardLayout>
   );
 }

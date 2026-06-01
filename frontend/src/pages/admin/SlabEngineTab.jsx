@@ -104,9 +104,9 @@ export default function SlabEngineTab() {
   if (loading) {
     return (
       <div>
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-6">
           <h2 className="text-xl font-header text-charcoal">Incentive Slabs</h2>
-          <div className="w-32 h-10 bg-off-white rounded-md shimmer"></div>
+          <div className="w-full sm:w-32 h-10 bg-off-white rounded-md shimmer"></div>
         </div>
         <div className="card">
           <SkeletonLoader rows={4} columns={3} />
@@ -135,9 +135,9 @@ export default function SlabEngineTab() {
       )}
 
       {/* Controls */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
         <h2 className="text-xl font-header text-charcoal">Incentive Slabs</h2>
-        <Button variant="primary" onClick={handleAddSlab}>
+        <Button variant="primary" onClick={handleAddSlab} className="w-full sm:w-auto">
           ➕ Add Slab
         </Button>
       </div>
@@ -184,7 +184,7 @@ export default function SlabEngineTab() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-4 pt-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4">
                       <Input
                         label="Min Units"
                         type="number"
@@ -224,8 +224,8 @@ export default function SlabEngineTab() {
                   </div>
                 ) : (
                   // View Mode
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4 flex-1">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
                       <div className="w-12 h-12 bg-off-white rounded-full flex items-center justify-center">
                         <span className="text-lg font-header text-toyota-red">
                           {index + 1}
@@ -252,7 +252,7 @@ export default function SlabEngineTab() {
                       </div>
                     </div>
 
-                    <div className="flex gap-2 ml-4">
+                    <div className="flex gap-2 sm:ml-4 shrink-0">
                       <Button
                         variant="ghost"
                         size="sm"
