@@ -40,24 +40,49 @@ function toTitleCase(str) {
 
 function StatCard({ label, value, icon: Icon, accent = 'neutral' }) {
   const accents = {
-    neutral: { bg: 'bg-[#F5F5F5]', icon: 'text-[#525252]', ring: 'border-[#E5E5E5]' },
-    green: { bg: 'bg-emerald-50', icon: 'text-emerald-600', ring: 'border-emerald-100' },
-    red: { bg: 'bg-red-50', icon: 'text-red-600', ring: 'border-red-100' },
-    blue: { bg: 'bg-blue-50', icon: 'text-blue-600', ring: 'border-blue-100' },
+    neutral: {
+      bar: 'from-slate-500 to-slate-400',
+      bg: 'from-slate-50 to-white',
+      iconBg: 'bg-slate-100',
+      icon: 'text-slate-600',
+      value: 'text-slate-900',
+    },
+    green: {
+      bar: 'from-emerald-500 to-emerald-400',
+      bg: 'from-emerald-50/80 to-white',
+      iconBg: 'bg-emerald-100',
+      icon: 'text-emerald-600',
+      value: 'text-emerald-900',
+    },
+    red: {
+      bar: 'from-red-500 to-[#EB0A1E]',
+      bg: 'from-red-50/80 to-white',
+      iconBg: 'bg-red-100',
+      icon: 'text-[#EB0A1E]',
+      value: 'text-red-900',
+    },
+    blue: {
+      bar: 'from-blue-500 to-indigo-400',
+      bg: 'from-blue-50/80 to-white',
+      iconBg: 'bg-blue-100',
+      icon: 'text-blue-600',
+      value: 'text-blue-900',
+    },
   };
   const a = accents[accent] || accents.neutral;
 
   return (
     <div
-      className={`rounded-xl border bg-white p-4 shadow-sm ${a.ring}`}
+      className={`relative overflow-hidden rounded-xl border border-slate-200/80 bg-gradient-to-br ${a.bg} p-4 shadow-md shadow-slate-200/50`}
     >
-      <div className="flex items-start justify-between gap-3">
+      <div className={`absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b ${a.bar}`} />
+      <div className="flex items-start justify-between gap-3 pl-2">
         <div className="min-w-0">
-          <p className="text-[12px] font-medium text-[#737373] uppercase tracking-wide">{label}</p>
-          <p className="text-2xl font-semibold text-[#171717] mt-1 tabular-nums">{value}</p>
+          <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{label}</p>
+          <p className={`text-2xl font-bold mt-1 tabular-nums ${a.value}`}>{value}</p>
         </div>
-        <div className={`flex items-center justify-center w-10 h-10 rounded-lg shrink-0 ${a.bg}`}>
-          <Icon size={20} className={a.icon} />
+        <div className={`flex items-center justify-center w-11 h-11 rounded-xl shrink-0 ${a.iconBg}`}>
+          <Icon size={22} className={a.icon} />
         </div>
       </div>
     </div>
@@ -376,12 +401,12 @@ export default function CarInventoryTab() {
       </div>
 
       {/* Main table card */}
-      <div className="bg-white rounded-xl border border-[#E5E5E5] shadow-sm overflow-hidden">
+      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-lg shadow-slate-200/40 overflow-hidden">
         {/* Section header + primary action */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-4 sm:px-5 py-4 border-b border-[#F0F0F0]">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-5 py-5 border-b border-slate-100 bg-gradient-to-r from-white via-red-50/30 to-white">
           <div>
-            <h2 className="text-[15px] font-semibold text-[#171717]">Car Models</h2>
-            <p className="text-xs text-[#737373] mt-0.5">
+            <h2 className="text-base font-bold text-slate-900">Car Models</h2>
+            <p className="text-sm text-slate-500 mt-0.5">
               Manage vehicle models, variants, and availability
             </p>
           </div>
@@ -389,15 +414,19 @@ export default function CarInventoryTab() {
             type="button"
             onClick={() => handleOpenModal()}
             disabled={loading}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[#EB0A1E] rounded-lg hover:bg-[#C8071A] active:bg-[#A80616] transition-colors shadow-sm disabled:opacity-50 shrink-0 self-start sm:self-auto"
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold text-white rounded-xl transition-all shrink-0 self-start sm:self-auto disabled:opacity-50 hover:shadow-lg hover:shadow-red-300/40 hover:-translate-y-px active:translate-y-0"
+            style={{
+              background: 'linear-gradient(135deg, #EB0A1E 0%, #d40919 100%)',
+              boxShadow: '0 4px 14px rgba(235, 10, 30, 0.35)',
+            }}
           >
-            <IconPlus size={16} />
+            <IconPlus size={17} />
             Add Model
           </button>
         </div>
 
         {/* Toolbar: search + filters */}
-        <div className="px-4 sm:px-5 py-3 border-b border-[#F5F5F5] bg-[#FAFAFA]/80">
+        <div className="px-4 sm:px-5 py-3.5 border-b border-slate-100 bg-slate-50/80">
           <div className="flex flex-col lg:flex-row lg:items-center gap-3">
             <div className="relative w-full sm:max-w-[240px]">
               <IconSearch
@@ -409,7 +438,7 @@ export default function CarInventoryTab() {
                 placeholder="Search models..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 text-sm text-[#171717] bg-white border border-[#E5E5E5] rounded-lg outline-none focus:border-[#EB0A1E] focus:ring-2 focus:ring-[#EB0A1E]/10 transition-shadow"
+                className="w-full pl-9 pr-3 py-2 text-sm text-slate-800 bg-white border border-slate-200 rounded-xl outline-none focus:border-[#EB0A1E] focus:ring-2 focus:ring-red-100 transition-shadow"
                 aria-label="Search car models"
               />
             </div>
@@ -422,7 +451,7 @@ export default function CarInventoryTab() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="text-sm py-2 pl-2.5 pr-8 bg-white border border-[#E5E5E5] rounded-lg text-[#404040] outline-none focus:border-[#EB0A1E] focus:ring-2 focus:ring-[#EB0A1E]/10"
+                className="text-sm py-2 pl-2.5 pr-8 bg-white border border-slate-200 rounded-xl text-slate-700 outline-none focus:border-[#EB0A1E] focus:ring-2 focus:ring-red-100"
                 aria-label="Filter by status"
               >
                 <option value="all">All statuses</option>
@@ -432,7 +461,7 @@ export default function CarInventoryTab() {
               <select
                 value={variantFilter}
                 onChange={(e) => setVariantFilter(e.target.value)}
-                className="text-sm py-2 pl-2.5 pr-8 bg-white border border-[#E5E5E5] rounded-lg text-[#404040] outline-none focus:border-[#EB0A1E] focus:ring-2 focus:ring-[#EB0A1E]/10 min-w-[120px]"
+                className="text-sm py-2 pl-2.5 pr-8 bg-white border border-slate-200 rounded-xl text-slate-700 outline-none focus:border-[#EB0A1E] focus:ring-2 focus:ring-red-100 min-w-[120px]"
                 aria-label="Filter by variant"
               >
                 <option value="all">All variants</option>
@@ -450,18 +479,19 @@ export default function CarInventoryTab() {
         {loading ? (
           <TableSkeleton />
         ) : cars.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
-            <div className="w-14 h-14 rounded-xl bg-[#F5F5F5] flex items-center justify-center mb-4">
-              <IconCar size={28} className="text-[#A3A3A3]" />
+          <div className="flex flex-col items-center justify-center py-16 px-6 text-center bg-gradient-to-b from-red-50/40 to-white">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-100 to-red-50 border border-red-200 flex items-center justify-center mb-4 shadow-inner">
+              <IconCar size={32} className="text-[#EB0A1E]" />
             </div>
-            <h3 className="text-base font-semibold text-[#171717]">No car models yet</h3>
-            <p className="text-sm text-[#737373] mt-1 max-w-sm">
+            <h3 className="text-lg font-bold text-slate-900">No car models yet</h3>
+            <p className="text-sm text-slate-500 mt-1 max-w-sm">
               Add your first vehicle model to start tracking inventory and incentives.
             </p>
             <button
               type="button"
               onClick={() => handleOpenModal()}
-              className="mt-6 inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[#EB0A1E] rounded-lg hover:bg-[#C8071A] transition-colors"
+              className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white rounded-xl transition-all hover:shadow-lg hover:shadow-red-300/40"
+              style={{ background: 'linear-gradient(135deg, #EB0A1E, #c8071a)' }}
             >
               <IconPlus size={16} />
               Create first model
@@ -487,12 +517,12 @@ export default function CarInventoryTab() {
             <div className="overflow-x-auto">
               <table className="w-full min-w-[720px] border-collapse text-sm">
                 <thead>
-                  <tr className="bg-[#FAFAFA] border-b border-[#EEEEEE]">
+                  <tr className="bg-gradient-to-r from-slate-100 to-slate-50 border-b border-slate-200">
                     {['Model Name', 'Base Suffix', 'Variant', 'Status', ''].map((col) => (
                       <th
                         key={col || 'actions'}
                         scope="col"
-                        className={`px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-[#737373] ${
+                        className={`px-4 py-2.5 text-left text-[11px] font-bold uppercase tracking-wider text-slate-600 ${
                           col === '' ? 'w-[52px]' : ''
                         }`}
                       >
@@ -508,17 +538,17 @@ export default function CarInventoryTab() {
                     <tr
                       key={car.id}
                       className={[
-                        'border-b border-[#F5F5F5] transition-colors',
-                        idx % 2 === 1 ? 'bg-[#FAFAFA]/50' : 'bg-white',
-                        'hover:bg-[#FFF8F8]',
+                        'border-b border-slate-100 transition-colors',
+                        idx % 2 === 1 ? 'bg-slate-50/60' : 'bg-white',
+                        'hover:bg-red-50/50',
                       ].join(' ')}
                     >
                       <td className="px-4 py-2.5">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-lg bg-[#F5F5F5] flex items-center justify-center shrink-0">
-                            <IconCar size={15} className="text-[#737373]" />
+                          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-red-50 to-slate-100 border border-red-100/50 flex items-center justify-center shrink-0">
+                            <IconCar size={16} className="text-[#EB0A1E]" />
                           </div>
-                          <span className="font-medium text-[#171717]">
+                          <span className="font-semibold text-slate-900">
                             {toTitleCase(car.name)}
                           </span>
                         </div>
@@ -528,7 +558,7 @@ export default function CarInventoryTab() {
                       </td>
                       <td className="px-4 py-2.5">
                         {car.variant ? (
-                          <span className="inline-flex px-2 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-800 border border-blue-100">
+                          <span className="inline-flex px-2.5 py-0.5 rounded-lg text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
                             {toTitleCase(car.variant)}
                           </span>
                         ) : (
@@ -552,8 +582,8 @@ export default function CarInventoryTab() {
             </div>
 
             {/* Pagination */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-4 sm:px-5 py-3 border-t border-[#F0F0F0] bg-[#FAFAFA]/60">
-              <p className="text-xs text-[#737373] tabular-nums">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-5 py-3.5 border-t border-slate-200 bg-slate-50">
+              <p className="text-sm text-slate-600 tabular-nums font-medium">
                 Showing {rangeStart}–{rangeEnd} of {filteredCars.length} models
               </p>
               <div className="flex items-center gap-2 justify-center sm:justify-end">
@@ -561,20 +591,20 @@ export default function CarInventoryTab() {
                   type="button"
                   disabled={currentPage <= 1}
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-[#404040] bg-white border border-[#E5E5E5] rounded-lg hover:bg-[#FAFAFA] disabled:opacity-40 disabled:pointer-events-none transition-colors"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-red-50 hover:border-red-200 hover:text-[#EB0A1E] disabled:opacity-40 disabled:pointer-events-none transition-colors"
                   aria-label="Previous page"
                 >
                   <IconChevronLeft size={14} />
                   Previous
                 </button>
-                <span className="text-xs text-[#737373] px-2 tabular-nums">
+                <span className="text-xs font-semibold text-[#EB0A1E] bg-red-50 px-3 py-1 rounded-lg border border-red-100 tabular-nums">
                   Page {currentPage} of {totalPages}
                 </span>
                 <button
                   type="button"
                   disabled={currentPage >= totalPages}
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-[#404040] bg-white border border-[#E5E5E5] rounded-lg hover:bg-[#FAFAFA] disabled:opacity-40 disabled:pointer-events-none transition-colors"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-red-50 hover:border-red-200 hover:text-[#EB0A1E] disabled:opacity-40 disabled:pointer-events-none transition-colors"
                   aria-label="Next page"
                 >
                   Next

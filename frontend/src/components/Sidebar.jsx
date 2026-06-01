@@ -1,25 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { IconCar, IconX, IconPanelLeft, IconLogOut, IconChevronDown } from './icons';
 
-/** Sidebar design tokens */
-const tokens = {
-  bg: '#111827',
-  border: 'rgba(255, 255, 255, 0.06)',
-  text: '#F3F4F6',
-  textMuted: '#9CA3AF',
-  textDim: '#6B7280',
-  hover: 'rgba(255, 255, 255, 0.05)',
-  activeBg: 'rgba(235, 10, 30, 0.1)',
-  activeBorder: '#EB0A1E',
-  accent: '#EB0A1E',
-};
-
 function NavIcon({ icon: NavIconComponent, emoji, active }) {
   if (typeof NavIconComponent === 'function') {
     return (
       <NavIconComponent
         size={18}
-        className={`shrink-0 ${active ? 'text-[#F9FAFB]' : 'text-[#9CA3AF]'}`}
+        className={`shrink-0 ${active ? 'text-[#FF6B7A]' : 'text-[#94A3B8]'}`}
         strokeWidth={1.75}
       />
     );
@@ -51,15 +38,16 @@ function SidebarProfile({ name, role, initials, collapsed, onLogout, onMobileClo
   }, [open]);
 
   return (
-    <div className="relative px-3 py-3 border-t" style={{ borderColor: tokens.border }} ref={ref}>
+    <div className="relative px-3 py-3 border-t border-white/10" ref={ref}>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
         className={[
-          'w-full flex items-center rounded-lg transition-colors duration-150',
-          'hover:bg-white/[0.05] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#EB0A1E]/40',
-          collapsed ? 'justify-center p-2' : 'gap-3 px-2 py-2 text-left',
-          open ? 'bg-white/[0.05]' : '',
+          'w-full flex items-center rounded-xl transition-all duration-200',
+          'bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06]',
+          'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#EB0A1E]/50',
+          collapsed ? 'justify-center p-2' : 'gap-3 px-3 py-2.5 text-left',
+          open ? 'ring-1 ring-[#EB0A1E]/30' : '',
         ].join(' ')}
         aria-expanded={open}
         aria-haspopup="menu"
@@ -67,21 +55,20 @@ function SidebarProfile({ name, role, initials, collapsed, onLogout, onMobileClo
         title={collapsed ? name : undefined}
       >
         <div
-          className="flex items-center justify-center shrink-0 w-9 h-9 rounded-full text-white text-xs font-semibold"
-          style={{ background: `linear-gradient(135deg, ${tokens.accent} 0%, #991b1b 100%)` }}
-          aria-hidden
+          className="flex items-center justify-center shrink-0 w-9 h-9 rounded-full text-white text-xs font-bold ring-2 ring-[#EB0A1E]/40"
+          style={{ background: 'linear-gradient(135deg, #EB0A1E 0%, #b91c1c 50%, #7f1d1d 100%)' }}
         >
           {initials || '?'}
         </div>
         {!collapsed && (
           <>
             <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-medium text-[#F9FAFB] truncate leading-tight">{name}</p>
-              <p className="text-[11px] text-[#6B7280] truncate leading-tight mt-0.5">{role}</p>
+              <p className="text-[13px] font-semibold text-white truncate">{name}</p>
+              <p className="text-[11px] text-[#94A3B8] truncate mt-0.5">{role}</p>
             </div>
             <IconChevronDown
               size={16}
-              className={`shrink-0 text-[#6B7280] transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+              className={`shrink-0 text-[#64748B] transition-transform ${open ? 'rotate-180 text-[#EB0A1E]' : ''}`}
             />
           </>
         )}
@@ -91,17 +78,15 @@ function SidebarProfile({ name, role, initials, collapsed, onLogout, onMobileClo
         <div
           role="menu"
           className={[
-            'absolute z-50 py-1 rounded-lg border shadow-xl',
-            'bg-[#1F2937] border-[#374151]',
-            collapsed
-              ? 'left-full bottom-0 ml-2 w-48'
-              : 'left-3 right-3 bottom-full mb-2',
+            'absolute z-50 py-1.5 rounded-xl border overflow-hidden',
+            'bg-[#1e293b] border-[#334155] shadow-2xl shadow-black/40',
+            collapsed ? 'left-full bottom-0 ml-2 w-52' : 'left-3 right-3 bottom-full mb-2',
           ].join(' ')}
         >
           {!collapsed && (
-            <div className="px-3 py-2.5 border-b border-[#374151]">
-              <p className="text-[13px] font-medium text-[#F9FAFB] truncate">{name}</p>
-              <p className="text-[11px] text-[#9CA3AF] truncate mt-0.5">{role}</p>
+            <div className="px-3 py-3 bg-gradient-to-r from-[#EB0A1E]/10 to-transparent border-b border-[#334155]">
+              <p className="text-[13px] font-semibold text-white truncate">{name}</p>
+              <p className="text-[11px] text-[#94A3B8] truncate">{role}</p>
             </div>
           )}
           <button
@@ -112,9 +97,9 @@ function SidebarProfile({ name, role, initials, collapsed, onLogout, onMobileClo
               onMobileClose?.();
               onLogout?.();
             }}
-            className="w-full flex items-center gap-2.5 px-3 py-2.5 text-[13px] text-[#FCA5A5] hover:bg-[#374151] transition-colors text-left focus:outline-none focus-visible:bg-[#374151]"
+            className="w-full flex items-center gap-2.5 px-3 py-2.5 text-[13px] font-medium text-red-300 hover:bg-red-500/10 hover:text-red-200 transition-colors text-left"
           >
-            <IconLogOut size={16} className="shrink-0" />
+            <IconLogOut size={16} />
             Sign out
           </button>
         </div>
@@ -123,9 +108,6 @@ function SidebarProfile({ name, role, initials, collapsed, onLogout, onMobileClo
   );
 }
 
-/**
- * Modern SaaS sidebar — Stripe / Linear inspired
- */
 export default function Sidebar({
   items,
   activeItem,
@@ -150,64 +132,59 @@ export default function Sidebar({
         'fixed inset-y-0 left-0 transition-[width,transform] duration-300 ease-out',
         'lg:static lg:translate-x-0',
         mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
-        isCollapsed ? 'lg:w-[68px]' : 'lg:w-[260px]',
+        isCollapsed ? 'lg:w-[72px]' : 'lg:w-[260px]',
         mobileOpen ? 'w-[min(280px,88vw)]' : '',
       ].join(' ')}
-      style={{ backgroundColor: tokens.bg }}
+      style={{
+        background: 'linear-gradient(180deg, #0c1222 0%, #151d32 50%, #111827 100%)',
+      }}
       aria-label="Sidebar navigation"
     >
+      {/* Accent stripe */}
+      <div className="h-1 w-full bg-gradient-to-r from-[#EB0A1E] via-[#ff4d5e] to-[#EB0A1E]" />
+
       {/* Logo */}
       <div
         className={[
-          'flex items-center shrink-0 border-b h-[60px]',
+          'flex items-center shrink-0 border-b border-white/10 h-[64px] relative',
           isCollapsed ? 'justify-center px-2' : 'gap-3 px-4',
         ].join(' ')}
-        style={{ borderColor: tokens.border }}
       >
         <div
-          className="flex items-center justify-center w-9 h-9 rounded-lg shrink-0"
-          style={{ backgroundColor: tokens.accent }}
+          className="flex items-center justify-center w-10 h-10 rounded-xl shrink-0 shadow-lg shadow-red-900/30"
+          style={{ background: 'linear-gradient(135deg, #EB0A1E, #c8071a)' }}
         >
-          <IconCar size={18} className="text-white" strokeWidth={2} />
+          <IconCar size={20} className="text-white" strokeWidth={2} />
         </div>
 
         {!isCollapsed && (
-          <div className="flex-1 min-w-0 pr-8 lg:pr-0">
-            <p className="text-[15px] font-semibold text-[#F9FAFB] tracking-tight leading-tight">
-              Toyota
-            </p>
-            <p className="text-[11px] text-[#6B7280] leading-tight mt-0.5">
-              Incentive Calculator
-            </p>
+          <div className="flex-1 min-w-0 pr-9 lg:pr-0">
+            <p className="text-[15px] font-bold text-white tracking-tight">Toyota</p>
+            <p className="text-[11px] text-[#64748B] mt-0.5">Incentive Calculator</p>
           </div>
         )}
 
-        {/* Mobile close */}
         <button
           type="button"
           onClick={onMobileClose}
-          className="lg:hidden absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 rounded-lg text-[#9CA3AF] hover:text-[#F3F4F6] hover:bg-white/[0.06] border border-[#374151] transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#EB0A1E]/40"
+          className="lg:hidden absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-white bg-slate-800/80 hover:bg-slate-700 border border-slate-600/50 transition-colors"
           aria-label="Close navigation"
         >
           <IconX size={18} />
         </button>
       </div>
 
-      {/* Nav */}
       <nav
-        className={[
-          'flex-1 overflow-y-auto overflow-x-hidden overscroll-contain py-4',
-          isCollapsed ? 'px-2' : 'px-3',
-        ].join(' ')}
+        className={['flex-1 overflow-y-auto py-4', isCollapsed ? 'px-2' : 'px-3'].join(' ')}
         aria-label="Main"
       >
         {!isCollapsed && (
-          <p className="px-3 mb-2 text-[11px] font-medium uppercase tracking-wider text-[#4B5563]">
-            Navigation
+          <p className="px-3 mb-3 text-[10px] font-bold uppercase tracking-widest text-[#475569]">
+            Menu
           </p>
         )}
 
-        <ul className="space-y-0.5" role="list">
+        <ul className="space-y-1">
           {items.map((item) => {
             const isActive = activeItem === item.id;
             return (
@@ -218,27 +195,21 @@ export default function Sidebar({
                   aria-current={isActive ? 'page' : undefined}
                   title={isCollapsed ? item.label : undefined}
                   className={[
-                    'group w-full flex items-center transition-all duration-150 ease-out',
-                    'focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#EB0A1E]/35',
-                    isCollapsed
-                      ? 'justify-center p-2.5 rounded-lg'
-                      : 'gap-3 px-3 py-2 rounded-md text-left',
+                    'w-full flex items-center rounded-xl transition-all duration-200',
+                    'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#EB0A1E]/50',
+                    isCollapsed ? 'justify-center p-2.5' : 'gap-3 px-3 py-2.5 text-left',
                     isActive
-                      ? 'text-[#F9FAFB] !bg-[rgba(235,10,30,0.1)]'
-                      : 'text-[#9CA3AF] hover:text-[#E5E7EB]',
+                      ? 'text-white shadow-md shadow-red-900/20'
+                      : 'text-[#94A3B8] hover:text-white hover:bg-white/[0.06]',
                   ].join(' ')}
-                  style={{
-                    borderLeft: isCollapsed
-                      ? 'none'
-                      : `2px solid ${isActive ? tokens.activeBorder : 'transparent'}`,
-                    paddingLeft: isCollapsed ? undefined : isActive ? '10px' : '12px',
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isActive) e.currentTarget.style.backgroundColor = tokens.hover;
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive) e.currentTarget.style.backgroundColor = 'transparent';
-                  }}
+                  style={
+                    isActive
+                      ? {
+                          background: 'linear-gradient(90deg, rgba(235,10,30,0.25) 0%, rgba(235,10,30,0.08) 100%)',
+                          borderLeft: isCollapsed ? 'none' : '3px solid #EB0A1E',
+                        }
+                      : { borderLeft: isCollapsed ? 'none' : '3px solid transparent' }
+                  }
                 >
                   <NavIcon
                     icon={item.icon}
@@ -246,7 +217,7 @@ export default function Sidebar({
                     active={isActive}
                   />
                   {!isCollapsed && (
-                    <span className={`text-[13px] truncate ${isActive ? 'font-medium' : 'font-normal'}`}>
+                    <span className={`text-[13px] truncate ${isActive ? 'font-semibold' : 'font-medium'}`}>
                       {item.label}
                     </span>
                   )}
@@ -257,17 +228,15 @@ export default function Sidebar({
         </ul>
       </nav>
 
-      {/* Collapse toggle — desktop */}
       {onToggleCollapse && (
-        <div className={`hidden lg:block pb-1 ${isCollapsed ? 'px-2' : 'px-3'}`}>
+        <div className={`hidden lg:block pb-2 ${isCollapsed ? 'px-2' : 'px-3'}`}>
           <button
             type="button"
             onClick={onToggleCollapse}
             className={[
-              'w-full flex items-center rounded-lg py-2 text-[#6B7280]',
-              'hover:text-[#9CA3AF] hover:bg-white/[0.05] transition-colors duration-150',
-              'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#EB0A1E]/40',
-              isCollapsed ? 'justify-center px-2' : 'gap-2.5 px-3 text-[12px]',
+              'w-full flex items-center rounded-lg py-2 text-[#64748B] hover:text-[#cbd5e1]',
+              'hover:bg-white/[0.06] transition-colors text-[12px]',
+              isCollapsed ? 'justify-center px-2' : 'gap-2 px-3',
             ].join(' ')}
             aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
@@ -277,7 +246,6 @@ export default function Sidebar({
         </div>
       )}
 
-      {/* Profile or legacy userSection */}
       {showProfile ? (
         <SidebarProfile
           name={userName}
@@ -289,11 +257,7 @@ export default function Sidebar({
         />
       ) : (
         userSection &&
-        !isCollapsed && (
-          <div className="border-t" style={{ borderColor: tokens.border }}>
-            {userSection}
-          </div>
-        )
+        !isCollapsed && <div className="border-t border-white/10">{userSection}</div>
       )}
     </aside>
   );

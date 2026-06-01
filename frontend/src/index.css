@@ -12,14 +12,25 @@ html {
   scroll-behavior: smooth;
 }
 
+:root {
+  --toyota-red: #eb0a1e;
+  --toyota-red-dark: #c8071a;
+  --toyota-red-light: #fff0f1;
+  --toyota-red-glow: rgba(235, 10, 30, 0.15);
+  --surface-page: #f0f2f8;
+  --surface-card: #ffffff;
+  --sidebar-from: #0c1222;
+  --sidebar-to: #151d32;
+}
+
 body {
   font-family: 'Inter', 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #F8F8F8;
-  color: #1A1A1A;
+  background-color: var(--surface-page);
+  color: #1a1a1a;
 }
 
 #root {
@@ -105,17 +116,19 @@ body {
 /* Buttons */
 .btn-primary {
   padding: 0.5rem 1rem;
-  background-color: #EB0A1E;
+  background: linear-gradient(135deg, #eb0a1e 0%, #d40919 100%);
   color: white;
-  font-weight: 500;
-  border-radius: 6px;
+  font-weight: 600;
+  border-radius: 10px;
   transition: all 150ms;
   border: none;
   cursor: pointer;
+  box-shadow: 0 4px 12px rgba(235, 10, 30, 0.3);
 }
 
 .btn-primary:hover {
-  background-color: #b30816;
+  background: linear-gradient(135deg, #d40919 0%, #b30816 100%);
+  box-shadow: 0 6px 16px rgba(235, 10, 30, 0.35);
 }
 
 .btn-primary:active {

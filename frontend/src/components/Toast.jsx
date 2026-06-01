@@ -19,10 +19,10 @@ export default function Toast({ message, type = 'success', autoClose = 4000, onC
   if (!isVisible) return null;
 
   const typeStyles = {
-    success: { bg: '#DCFCE7', border: '#10B981', text: '#065F46' },
-    error: { bg: '#FEE2E2', border: '#EB0A1E', text: '#991B1B' },
-    warning: { bg: '#FEF3C7', border: '#F59E0B', text: '#92400E' },
-    info: { bg: '#DBEAFE', border: '#3B82F6', text: '#1E40AF' },
+    success: { bg: '#ecfdf5', border: '#10b981', text: '#047857' },
+    error: { bg: '#fef2f2', border: '#EB0A1E', text: '#991b1b' },
+    warning: { bg: '#fffbeb', border: '#f59e0b', text: '#b45309' },
+    info: { bg: '#eff6ff', border: '#3b82f6', text: '#1d4ed8' },
   };
 
   const typeIcons = {

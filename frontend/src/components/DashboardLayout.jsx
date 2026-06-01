@@ -61,8 +61,11 @@ export default function DashboardLayout({
 
   return (
     <div
-      className="flex h-[100dvh] overflow-hidden font-sans bg-[#F5F5F5]"
-      style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
+      className="flex h-[100dvh] overflow-hidden font-sans"
+      style={{
+        fontFamily: 'Inter, system-ui, sans-serif',
+        background: 'linear-gradient(160deg, #eef1f8 0%, #f8f9fc 40%, #f0f2f8 100%)',
+      }}
     >
       {mobileNavOpen && (
         <button
