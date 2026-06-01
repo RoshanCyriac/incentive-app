@@ -19,8 +19,10 @@ export default function Modal({ isOpen, title, children, onClose, actions }) {
       <div className="modal-overlay flex items-center justify-center">
         <div className="modal-content fade-in" onClick={(e) => e.stopPropagation()}>
           {/* Header */}
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-header text-charcoal">{title}</h2>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+            <h2 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#1A1A1A' }}>
+              {title}
+            </h2>
             <button
               onClick={onClose}
               className="btn-icon"
@@ -31,11 +33,11 @@ export default function Modal({ isOpen, title, children, onClose, actions }) {
           </div>
 
           {/* Body */}
-          <div className="mb-6">{children}</div>
+          <div style={{ marginBottom: '1.5rem' }}>{children}</div>
 
           {/* Footer */}
           {actions && (
-            <div className="flex gap-3 justify-end">
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
               {actions.map((action, idx) => (
                 <div key={idx}>{action}</div>
               ))}

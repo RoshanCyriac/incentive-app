@@ -20,26 +20,21 @@ export default function Button({
   type = 'button',
   ...rest
 }) {
-  const baseStyles = 'font-medium rounded-md transition-all duration-150 flex items-center justify-center gap-2';
-
-  const variantStyles = {
-    primary:
-      'px-4 py-2 bg-toyota-red text-white hover:bg-red-700 active:scale-95 disabled:opacity-50',
-    secondary:
-      'px-4 py-2 bg-white text-charcoal border-2 border-charcoal hover:bg-charcoal hover:text-white active:scale-95 disabled:opacity-50',
-    ghost: 'px-4 py-2 text-charcoal hover:bg-off-white active:scale-95 disabled:opacity-50',
-    icon: 'w-10 h-10 text-charcoal hover:bg-off-white active:bg-silver-gray disabled:opacity-50',
+  const variantClasses = {
+    primary: 'btn-primary',
+    secondary: 'btn-secondary',
+    ghost: 'btn-ghost',
+    icon: 'btn-icon',
   };
 
-  const sizeStyles = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2 text-base',
+  const sizeClasses = {
+    sm: 'btn-primary-sm',
+    md: '',
   };
 
   const combinedClass = `
-    ${baseStyles}
-    ${variantStyles[variant] || variantStyles.primary}
-    ${size !== 'md' ? sizeStyles[size] : ''}
+    ${variantClasses[variant] || variantClasses.primary}
+    ${size === 'sm' && variant === 'primary' ? 'btn-primary-sm' : ''}
     ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}
     ${className}
   `.trim();

@@ -17,11 +17,11 @@ export default function Input({
   ...rest
 }) {
   return (
-    <div className="w-full">
+    <div style={{ width: '100%' }}>
       {label && (
         <label htmlFor={name} className="form-label">
           {label}
-          {required && <span className="text-toyota-red ml-1">*</span>}
+          {required && <span style={{ color: '#EB0A1E', marginLeft: '0.25rem' }}>*</span>}
         </label>
       )}
       <input
@@ -35,7 +35,7 @@ export default function Input({
         className={`input-field ${error ? 'input-error' : ''} ${className}`}
         {...rest}
       />
-      {error && <p className="text-sm text-status-error mt-1">{error}</p>}
+      {error && <p style={{ fontSize: '0.875rem', color: '#EF4444', marginTop: '0.25rem' }}>{error}</p>}
     </div>
   );
 }

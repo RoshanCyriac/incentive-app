@@ -7,23 +7,30 @@ export default function StatCard({ icon, label, value, trend, trendLabel }) {
   return (
     <div className="card bg-white">
       <div className="flex items-start justify-between mb-3">
-        <div className="text-3xl">{icon}</div>
+        <div style={{ fontSize: '2rem' }}>{icon}</div>
         {trend && (
           <div
-            className={`text-xs font-label px-2 py-1 rounded-md ${
-              trend === 'up'
-                ? 'bg-green-100 text-green-700'
-                : 'bg-red-100 text-red-700'
-            }`}
+            style={{
+              fontSize: '0.75rem',
+              fontWeight: '500',
+              padding: '0.25rem 0.5rem',
+              borderRadius: '0.375rem',
+              backgroundColor: trend === 'up' ? '#D1FAE5' : '#FEE2E2',
+              color: trend === 'up' ? '#065F46' : '#991B1B',
+            }}
           >
             {trendLabel || (trend === 'up' ? '↑ Up' : '↓ Down')}
           </div>
         )}
       </div>
-      <p className="text-sm text-gray-500 font-label mb-2">{label}</p>
-      <p className="text-2xl font-header text-charcoal">{value}</p>
+      <p style={{ fontSize: '0.875rem', color: '#6B7280', fontWeight: '500' }} className="mb-2">
+        {label}
+      </p>
+      <p style={{ fontSize: '1.875rem', fontWeight: '600', color: '#1A1A1A' }}>
+        {value}
+      </p>
       {/* Red accent bottom border */}
-      <div className="mt-3 h-1 w-12 bg-toyota-red rounded-full"></div>
+      <div style={{ marginTop: '0.75rem', height: '0.25rem', width: '3rem', backgroundColor: '#EB0A1E', borderRadius: '9999px' }}></div>
     </div>
   );
 }

@@ -19,17 +19,32 @@ export default function Alert({ type = 'info', title, message, children, onClose
   };
 
   return (
-    <div className={`${alertStyles[type]} flex items-start gap-3`}>
-      <span className="text-lg font-bold flex-shrink-0 mt-0.5">{icons[type]}</span>
-      <div className="flex-1">
-        {title && <p className="font-header text-charcoal mb-1">{title}</p>}
-        {message && <p className="text-sm text-charcoal">{message}</p>}
+    <div className={alertStyles[type]} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+      <span style={{ fontSize: '1rem', fontWeight: 'bold', flexShrink: 0, marginTop: '0.125rem' }}>
+        {icons[type]}
+      </span>
+      <div style={{ flex: 1 }}>
+        {title && (
+          <p style={{ fontWeight: '600', color: '#1A1A1A', marginBottom: '0.25rem' }}>
+            {title}
+          </p>
+        )}
+        {message && <p style={{ fontSize: '0.875rem', color: '#1A1A1A' }}>{message}</p>}
         {children}
       </div>
       {onClose && (
         <button
           onClick={onClose}
-          className="flex-shrink-0 text-charcoal hover:opacity-75 transition-opacity"
+          style={{
+            flexShrink: 0,
+            color: '#1A1A1A',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: '1rem',
+          }}
+          onMouseEnter={(e) => (e.target.style.opacity = '0.5')}
+          onMouseLeave={(e) => (e.target.style.opacity = '1')}
         >
           ✕
         </button>

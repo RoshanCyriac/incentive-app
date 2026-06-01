@@ -19,10 +19,10 @@ export default function Toast({ message, type = 'success', autoClose = 4000, onC
   if (!isVisible) return null;
 
   const typeStyles = {
-    success: 'bg-green-50 border-green-300 text-green-800',
-    error: 'bg-red-50 border-toyota-red text-red-800',
-    warning: 'bg-amber-50 border-amber-300 text-amber-800',
-    info: 'bg-blue-50 border-blue-300 text-blue-800',
+    success: { bg: '#DCFCE7', border: '#10B981', text: '#065F46' },
+    error: { bg: '#FEE2E2', border: '#EB0A1E', text: '#991B1B' },
+    warning: { bg: '#FEF3C7', border: '#F59E0B', text: '#92400E' },
+    info: { bg: '#DBEAFE', border: '#3B82F6', text: '#1E40AF' },
   };
 
   const typeIcons = {
@@ -32,17 +32,47 @@ export default function Toast({ message, type = 'success', autoClose = 4000, onC
     info: 'ℹ',
   };
 
+  const style = typeStyles[type] || typeStyles.success;
+
   return (
     <div
-      className={`fixed top-6 right-6 px-4 py-3 rounded-md border-l-4 flex items-center gap-3 shadow-card fade-in z-50 max-w-sm ${
-        typeStyles[type] || typeStyles.success
-      }`}
+      style={{
+        position: 'fixed',
+        top: '1.5rem',
+        right: '1.5rem',
+        padding: '0.75rem 1rem',
+        borderRadius: '0.375rem',
+        borderLeft: `4px solid ${style.border}`,
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.75rem',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
+        zIndex: 9999,
+        backgroundColor: style.bg,
+        color: style.text,
+        maxWidth: '28rem',
+        animation: 'fadeIn 150ms ease-in forwards',
+      }}
     >
-      <span className="text-lg font-bold">{typeIcons[type] || '✓'}</span>
-      <span className="text-sm font-medium flex-1">{message}</span>
+      <span style={{ fontSize: '1rem', fontWeight: 'bold' }}>
+        {typeIcons[type] || '✓'}
+      </span>
+      <span style={{ fontSize: '0.875rem', fontWeight: '500', flex: 1 }}>
+        {message}
+      </span>
       <button
         onClick={() => setIsVisible(false)}
-        className="text-lg hover:opacity-75 transition-opacity"
+        style={{
+          fontSize: '1rem',
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          color: 'inherit',
+          opacity: 0.75,
+          transition: 'opacity 150ms',
+        }}
+        onMouseEnter={(e) => (e.target.style.opacity = '1')}
+        onMouseLeave={(e) => (e.target.style.opacity = '0.75')}
       >
         ✕
       </button>

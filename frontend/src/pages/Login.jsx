@@ -88,31 +88,27 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-off-white flex overflow-hidden">
-      {/* Left Panel - Toyota Red */}
-      <div className="hidden lg:flex lg:w-1/2 bg-toyota-red flex-col items-center justify-center p-12 relative overflow-hidden">
-        {/* Diagonal accent */}
-        <div className="absolute inset-0 opacity-10">
-          <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <defs>
-              <pattern id="diagonal" patternUnits="userSpaceOnUse" width="10" height="10">
-                <line x1="0" y1="0" x2="10" y2="10" stroke="white" strokeWidth="1" />
-                <line x1="10" y1="0" x2="0" y2="10" stroke="white" strokeWidth="1" />
-              </pattern>
-            </defs>
-            <rect width="100" height="100" fill="url(#diagonal)" />
-          </svg>
-        </div>
-
+    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#F8F8F8', overflow: 'hidden' }}>
+      {/* Left Panel - Toyota Red - Hidden on mobile */}
+      <div
+        style={{
+          display: 'none',
+          width: '50%',
+          backgroundColor: '#EB0A1E',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '3rem',
+          position: 'relative',
+          overflow: 'hidden',
+          '@media (min-width: 1024px)': { display: 'flex' },
+        }}
+      >
         {/* Content */}
-        <div className="relative z-10 text-center">
-          <div className="mb-8">
-            <div className="inline-block">
-              <svg
-                className="w-24 h-24 text-white"
-                fill="currentColor"
-                viewBox="0 0 100 100"
-              >
+        <div style={{ position: 'relative', zIndex: 10, textAlign: 'center' }}>
+          <div style={{ marginBottom: '2rem' }}>
+            <div style={{ display: 'inline-block' }}>
+              <svg style={{ width: '6rem', height: '6rem' }} fill="white" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" r="45" fill="none" stroke="white" strokeWidth="2" />
                 <text x="50" y="60" textAnchor="middle" fontSize="40" fontWeight="bold" fill="white">
                   T
@@ -120,72 +116,81 @@ export default function Login() {
               </svg>
             </div>
           </div>
-          <h1 className="text-4xl font-header text-white mb-2">
+          <h1 style={{ fontSize: '2.25rem', fontWeight: '600', color: 'white', marginBottom: '0.5rem' }}>
             Toyota
           </h1>
-          <p className="text-white text-opacity-90 font-label text-lg">
+          <p style={{ color: 'rgba(255,255,255,0.9)', fontWeight: '500', fontSize: '1.125rem' }}>
             Smart Incentive Calculator
           </p>
-          <p className="text-white text-opacity-75 text-sm mt-3 max-w-sm">
+          <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.875rem', marginTop: '0.75rem', maxWidth: '28rem' }}>
             Dealer Portal for Sales Incentive Management
           </p>
         </div>
-
         {/* Footer */}
-        <div className="absolute bottom-6 text-white text-opacity-75 text-xs">
+        <div style={{ position: 'absolute', bottom: '1.5rem', color: 'rgba(255,255,255,0.75)', fontSize: '0.75rem' }}>
           <p>Smart Incentive Calculator v1.0</p>
         </div>
       </div>
 
       {/* Right Panel - Login Form */}
-      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 sm:p-12">
-        <div className="w-full max-w-md">
-          {/* Mobile Logo */}
-          <div className="lg:hidden mb-8 text-center">
-            <div className="inline-block mb-4">
-              <div className="w-16 h-16 bg-toyota-red rounded-md flex items-center justify-center">
-                <span className="text-2xl font-header text-white">T</span>
-              </div>
-            </div>
-            <h1 className="text-2xl font-header text-charcoal mb-1">
-              Toyota
-            </h1>
-            <p className="text-sm text-gray-500">
-              Smart Incentive Calculator
-            </p>
-          </div>
-
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1.5rem 3rem' }}>
+        <div style={{ width: '100%', maxWidth: '28rem' }}>
           {/* Title for form */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-header text-charcoal mb-1">
+          <div style={{ marginBottom: '2rem' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '600', color: '#1A1A1A', marginBottom: '0.25rem' }}>
               {userRole === 'admin' ? 'Admin Login' : 'Sales Portal'}
             </h2>
-            <p className="text-sm text-gray-500">
+            <p style={{ fontSize: '0.875rem', color: '#6B7280' }}>
               Enter your credentials to continue
             </p>
           </div>
 
           {/* Role Toggle */}
-          <div className="mb-6 flex gap-2 bg-off-white p-1 rounded-md">
+          <div
+            style={{
+              marginBottom: '1.5rem',
+              display: 'flex',
+              gap: '0.5rem',
+              backgroundColor: '#F8F8F8',
+              padding: '0.25rem',
+              borderRadius: '0.375rem',
+            }}
+          >
             <button
               type="button"
               onClick={() => setUserRole('admin')}
-              className={`flex-1 py-2 px-3 rounded-md text-sm font-label transition-all duration-150 ${
-                userRole === 'admin'
-                  ? 'bg-white text-toyota-red shadow-sm'
-                  : 'text-charcoal hover:bg-white hover:bg-opacity-50'
-              }`}
+              style={{
+                flex: 1,
+                padding: '0.5rem 0.75rem',
+                borderRadius: '0.375rem',
+                fontSize: '0.875rem',
+                fontWeight: '500',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 150ms',
+                backgroundColor: userRole === 'admin' ? 'white' : 'transparent',
+                color: userRole === 'admin' ? '#EB0A1E' : '#1A1A1A',
+                boxShadow: userRole === 'admin' ? '0 1px 2px rgba(0,0,0,0.05)' : 'none',
+              }}
             >
               🔐 Admin
             </button>
             <button
               type="button"
               onClick={() => setUserRole('officer')}
-              className={`flex-1 py-2 px-3 rounded-md text-sm font-label transition-all duration-150 ${
-                userRole === 'officer'
-                  ? 'bg-white text-toyota-red shadow-sm'
-                  : 'text-charcoal hover:bg-white hover:bg-opacity-50'
-              }`}
+              style={{
+                flex: 1,
+                padding: '0.5rem 0.75rem',
+                borderRadius: '0.375rem',
+                fontSize: '0.875rem',
+                fontWeight: '500',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 150ms',
+                backgroundColor: userRole === 'officer' ? 'white' : 'transparent',
+                color: userRole === 'officer' ? '#EB0A1E' : '#1A1A1A',
+                boxShadow: userRole === 'officer' ? '0 1px 2px rgba(0,0,0,0.05)' : 'none',
+              }}
             >
               👤 Officer
             </button>
@@ -193,13 +198,13 @@ export default function Login() {
 
           {/* API Error Message */}
           {error && (
-            <div className="mb-6">
+            <div style={{ marginBottom: '1.5rem' }}>
               <Alert type="error" message={error} />
             </div>
           )}
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             {/* Email Field */}
             <Input
               label="Email Address"
@@ -212,13 +217,14 @@ export default function Login() {
               required
               disabled={isLoading}
             />
+
             {/* Password Field */}
             <div>
               <label htmlFor="password" className="form-label">
                 Password
-                <span className="text-toyota-red ml-1">*</span>
+                <span style={{ color: '#EB0A1E', marginLeft: '0.25rem' }}>*</span>
               </label>
-              <div className="relative">
+              <div style={{ position: 'relative' }}>
                 <input
                   id="password"
                   name="password"
@@ -235,13 +241,29 @@ export default function Login() {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   disabled={isLoading}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-charcoal transition disabled:opacity-50"
+                  style={{
+                    position: 'absolute',
+                    right: '0.75rem',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: '#6B7280',
+                    background: 'none',
+                    border: 'none',
+                    cursor: isLoading ? 'not-allowed' : 'pointer',
+                    opacity: isLoading ? 0.5 : 1,
+                    transition: 'color 150ms',
+                    fontSize: '1rem',
+                  }}
+                  onMouseEnter={(e) => (e.target.style.color = '#1A1A1A')}
+                  onMouseLeave={(e) => (e.target.style.color = '#6B7280')}
                 >
                   {showPassword ? '👁' : '👁‍🗨'}
                 </button>
               </div>
               {validationErrors.password && (
-                <p className="text-sm text-status-error mt-1">{validationErrors.password}</p>
+                <p style={{ fontSize: '0.875rem', color: '#EF4444', marginTop: '0.25rem' }}>
+                  {validationErrors.password}
+                </p>
               )}
             </div>
 
@@ -250,28 +272,21 @@ export default function Login() {
               type="submit"
               disabled={isLoading}
               variant="primary"
-              className="w-full mt-6"
+              style={{ width: '100%', marginTop: '1.5rem' }}
             >
               {isLoading ? (
                 <>
                   <svg
-                    className="animate-spin h-5 w-5"
+                    style={{ animation: 'spin 1s linear infinite', height: '1.25rem', width: '1.25rem' }}
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                   >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" opacity="0.25"></circle>
                     <path
-                      className="opacity-75"
                       fill="currentColor"
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      opacity="0.75"
                     ></path>
                   </svg>
                   Signing in...
@@ -282,20 +297,22 @@ export default function Login() {
             </Button>
           </form>
 
-          {/* Demo Credentials - Now styled with Toyota design */}
-          <div className="mt-6 p-4 bg-off-white rounded-md border-l-4 border-toyota-red">
-            <p className="text-xs font-header text-charcoal mb-2">Demo Credentials:</p>
-            <p className="text-xs text-gray-600">
-              <span className="font-label">Email:</span> admin@toyota.com
+          {/* Demo Credentials */}
+          <div style={{ marginTop: '1.5rem', padding: '1rem', backgroundColor: '#F8F8F8', borderRadius: '0.375rem', borderLeft: '4px solid #EB0A1E' }}>
+            <p style={{ fontSize: '0.75rem', fontWeight: '600', color: '#1A1A1A', marginBottom: '0.5rem' }}>
+              Demo Credentials:
             </p>
-            <p className="text-xs text-gray-600">
-              <span className="font-label">Password:</span> password123
+            <p style={{ fontSize: '0.75rem', color: '#4B5563' }}>
+              <span style={{ fontWeight: '500' }}>Email:</span> admin@toyota.com
+            </p>
+            <p style={{ fontSize: '0.75rem', color: '#4B5563' }}>
+              <span style={{ fontWeight: '500' }}>Password:</span> password123
             </p>
           </div>
         </div>
 
         {/* Footer */}
-        <p className="text-center text-gray-500 text-xs mt-6">
+        <p style={{ textAlign: 'center', color: '#6B7280', fontSize: '0.75rem', marginTop: '1.5rem' }}>
           © 2026 Toyota Smart Incentive Calculator. All rights reserved.
         </p>
       </div>
