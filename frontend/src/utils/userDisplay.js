@@ -3,6 +3,9 @@ export function getUserDisplayName(user) {
     const stored = localStorage.getItem('user_name');
     return stored || '';
   }
+  if (typeof user.display_name === 'string' && user.display_name.trim()) {
+    return user.display_name.trim();
+  }
   if (typeof user.name === 'string' && user.name.trim()) {
     return user.name.trim();
   }

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Sidebar from './Sidebar';
 import BottomNav from './BottomNav';
 import Header from './Header';
+import './DashboardShell.css';
 
 export default function DashboardLayout({
   sidebarItems,
@@ -52,10 +53,7 @@ export default function DashboardLayout({
   }, [activeItem, closeMobileNav]);
 
   return (
-    <div
-      className="flex h-[100dvh] overflow-hidden"
-      style={{ backgroundColor: '#F4F4F4', fontFamily: 'Inter, system-ui, sans-serif' }}
-    >
+    <div className="dashboard-shell">
       <Sidebar
         items={sidebarItems}
         activeItem={activeItem}
@@ -68,7 +66,7 @@ export default function DashboardLayout({
         onMobileClose={closeMobileNav}
       />
 
-      <div className="flex flex-1 flex-col min-w-0 overflow-hidden">
+      <div className="dashboard-content">
         <Header
           title={headerTitle}
           titleIcon={headerTitleIcon}
@@ -80,12 +78,7 @@ export default function DashboardLayout({
           onMenuClick={() => setMobileNavOpen(true)}
         />
 
-        <main
-          className="flex-1 overflow-x-hidden overflow-y-auto pb-14 md:pb-0"
-          style={{ padding: '20px 24px' }}
-        >
-          {children}
-        </main>
+        <main className="dashboard-main">{children}</main>
       </div>
 
       <BottomNav

@@ -69,89 +69,48 @@ function StatusBadge({ active = true }) {
   );
 }
 
-function ActionButtons({ car, onEdit, onDelete, compact }) {
-  const pad = compact ? '4px 8px' : '5px 10px';
+function ActionButtons({ car, onEdit, onDelete, cardActions = false }) {
+  const wrapClass = cardActions
+    ? 'ci-card-actions flex items-center gap-1.5 justify-end'
+    : 'flex items-center gap-1.5 flex-wrap justify-end';
   return (
-    <div className="flex items-center gap-1.5 flex-wrap justify-end">
-      <button
-        type="button"
-        className="ci-btn-action inline-flex items-center gap-1 transition-colors"
-        style={{
-          border: '0.5px solid #D0D0D0',
-          borderRadius: '5px',
-          padding: pad,
-          fontSize: '12px',
-          color: '#444',
-          background: 'transparent',
-          cursor: 'pointer',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = '#185FA5';
-          e.currentTarget.style.color = '#185FA5';
-          e.currentTarget.style.backgroundColor = '#F0F4FF';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = '#D0D0D0';
-          e.currentTarget.style.color = '#444';
-          e.currentTarget.style.backgroundColor = 'transparent';
-        }}
-        onClick={() => onEdit(car)}
-      >
+    <div className={wrapClass}>
+      <button type="button" className="ci-btn-edit" onClick={() => onEdit(car)}>
         <IconPencil size={13} />
-        Edit
+        <span className="ci-btn-label">Edit</span>
       </button>
-      <button
-        type="button"
-        className="ci-btn-action inline-flex items-center gap-1 transition-colors"
-        style={{
-          border: '0.5px solid #F0C0C0',
-          borderRadius: '5px',
-          padding: pad,
-          fontSize: '12px',
-          color: '#A32D2D',
-          background: 'transparent',
-          cursor: 'pointer',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = '#FCEBEB';
-          e.currentTarget.style.borderColor = '#E24B4A';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = 'transparent';
-          e.currentTarget.style.borderColor = '#F0C0C0';
-        }}
-        onClick={() => onDelete(car.id)}
-      >
+      <button type="button" className="ci-btn-delete" onClick={() => onDelete(car.id)}>
         <IconTrash size={13} />
-        Delete
+        <span className="ci-btn-label">Delete</span>
       </button>
     </div>
   );
 }
 
+function VariantBadge({ variant }) {
+  if (!variant) {
+    return <span style={{ color: '#666', fontSize: '13px' }}>—</span>;
+  }
+  return <span className="ci-variant-badge">{toTitleCase(variant)}</span>;
+}
+
 function ModelCard({ car, onEdit, onDelete }) {
   return (
     <article className="ci-model-card">
-      <div className="flex items-center gap-2.5 mb-2">
-        <div
-          className="flex items-center justify-center shrink-0 rounded-md"
-          style={{ width: '30px', height: '30px', backgroundColor: '#F4F4F4' }}
-        >
-          <IconCar size={15} style={{ color: '#888' }} />
+      <div className="ci-model-card-top">
+        <div className="ci-model-card-name-wrap">
+          <div className="ci-model-icon-box">
+            <IconCar size={15} style={{ color: '#888' }} />
+          </div>
+          <span className="ci-model-card-name">{toTitleCase(car.name)}</span>
         </div>
-        <span
-          className="flex-1 font-medium truncate"
-          style={{ fontSize: '13px', color: '#1A1A1A', fontWeight: 500 }}
-        >
-          {toTitleCase(car.name)}
-        </span>
         <StatusBadge active={car.is_active !== false} />
       </div>
-      <div className="flex items-center justify-between gap-2">
+      <div className="ci-model-card-bottom">
         <span style={{ fontSize: '12px', color: '#888' }}>
           {car.variant ? `Variant: ${toTitleCase(car.variant)}` : 'Variant: —'}
         </span>
-        <ActionButtons car={car} onEdit={onEdit} onDelete={onDelete} compact />
+        <ActionButtons car={car} onEdit={onEdit} onDelete={onDelete} cardActions />
       </div>
     </article>
   );
@@ -315,23 +274,10 @@ export default function CarInventoryTab() {
         </div>
       )}
 
-      <div
-        className="bg-white overflow-hidden"
-        style={{
-          border: '0.5px solid #E5E5E5',
-          borderRadius: '10px',
-        }}
-      >
-        {/* Toolbar */}
-        <div
-          className="ci-toolbar-row flex flex-wrap items-center justify-between gap-3"
-          style={{
-            padding: '14px 16px',
-            borderBottom: '0.5px solid #F0F0F0',
-          }}
-        >
-          <div className="ci-toolbar-top flex items-center justify-between gap-2 w-full md:w-auto">
-            <div className="flex items-center gap-2">
+      <div className="ci-card">
+        <div className="ci-toolbar-row">
+          <div className="ci-toolbar-mobile-top">
+            <div className="ci-toolbar-left">
               <span style={{ fontSize: '14px', fontWeight: 500, color: '#1A1A1A' }}>
                 Car Models
               </span>
@@ -347,42 +293,55 @@ export default function CarInventoryTab() {
                 {cars.length} {cars.length === 1 ? 'model' : 'models'}
               </span>
             </div>
-            <AddModelButton
+            <button
+              type="button"
+              className="ci-add-btn ci-add-btn--mobile"
               onClick={() => handleOpenModal()}
               disabled={loading}
-              className="md:hidden"
-            />
+            >
+              <IconPlus size={14} />
+              Add Model
+            </button>
           </div>
 
-          <div className="ci-toolbar-actions flex items-center gap-2 w-full md:w-auto">
-            <div className="ci-search-wrap relative" style={{ width: '180px' }}>
-              <IconSearch
-                size={14}
-                className="absolute pointer-events-none"
-                style={{ left: '9px', top: '50%', transform: 'translateY(-50%)', color: '#888' }}
-              />
+          <div className="ci-toolbar-left ci-toolbar-left--desktop">
+            <span style={{ fontSize: '14px', fontWeight: 500, color: '#1A1A1A' }}>
+              Car Models
+            </span>
+            <span
+              style={{
+                backgroundColor: '#F4F4F4',
+                color: '#666',
+                fontSize: '11px',
+                padding: '2px 8px',
+                borderRadius: '20px',
+              }}
+            >
+              {cars.length} {cars.length === 1 ? 'model' : 'models'}
+            </span>
+          </div>
+
+          <div className="ci-toolbar-right">
+            <div className="ci-search-wrap">
+              <IconSearch size={14} />
               <input
                 type="search"
                 placeholder="Search models..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="ci-search outline-none w-full"
-                style={{
-                  border: '0.5px solid #E0E0E0',
-                  borderRadius: '6px',
-                  padding: '6px 10px 6px 30px',
-                  fontSize: '12.5px',
-                  color: '#1A1A1A',
-                  backgroundColor: '#FAFAFA',
-                }}
+                className="ci-search"
                 aria-label="Search models"
               />
             </div>
-            <AddModelButton
+            <button
+              type="button"
+              className="ci-add-btn ci-add-btn--desktop"
               onClick={() => handleOpenModal()}
               disabled={loading}
-              className="hidden md:inline-flex"
-            />
+            >
+              <IconPlus size={14} />
+              Add Model
+            </button>
           </div>
         </div>
 
@@ -470,14 +429,7 @@ export default function CarInventoryTab() {
                           }}
                         >
                           <div className="flex items-center" style={{ gap: '10px' }}>
-                            <div
-                              className="flex items-center justify-center shrink-0 rounded-md"
-                              style={{
-                                width: '30px',
-                                height: '30px',
-                                backgroundColor: '#F4F4F4',
-                              }}
-                            >
+                            <div className="ci-model-icon-box">
                               <IconCar size={15} style={{ color: '#888' }} />
                             </div>
                             <span style={{ fontWeight: 500, color: '#1A1A1A', fontSize: '13px' }}>
@@ -502,22 +454,7 @@ export default function CarInventoryTab() {
                             borderBottom: isLast ? 'none' : '0.5px solid #F7F7F7',
                           }}
                         >
-                          {car.variant ? (
-                            <span
-                              style={{
-                                backgroundColor: '#F0F4FF',
-                                color: '#185FA5',
-                                fontSize: '11px',
-                                padding: '2px 8px',
-                                borderRadius: '4px',
-                                fontWeight: 500,
-                              }}
-                            >
-                              {toTitleCase(car.variant)}
-                            </span>
-                          ) : (
-                            <span style={{ color: '#666', fontSize: '13px' }}>—</span>
-                          )}
+                          <VariantBadge variant={car.variant} />
                         </td>
                         <td
                           style={{
@@ -672,36 +609,6 @@ export default function CarInventoryTab() {
         </p>
       </Modal>
     </>
-  );
-}
-
-function AddModelButton({ onClick, disabled, className = '' }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      className={`items-center justify-center gap-1.5 shrink-0 transition-colors disabled:opacity-50 ${className}`}
-      style={{
-        backgroundColor: '#EB0A1E',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '6px',
-        padding: '7px 14px',
-        fontSize: '12.5px',
-        fontWeight: 500,
-        cursor: 'pointer',
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.backgroundColor = '#C8071A';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.backgroundColor = '#EB0A1E';
-      }}
-    >
-      <IconPlus size={14} />
-      Add Model
-    </button>
   );
 }
 

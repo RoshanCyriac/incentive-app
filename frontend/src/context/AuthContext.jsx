@@ -131,6 +131,7 @@ export function AuthProvider({ children }) {
         payload: {
           role: user_role,
           name: user_name,
+          display_name: user_name,
           email: email,
         },
       });
