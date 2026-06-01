@@ -8,18 +8,26 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Inter', 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #F8F8F8;
+  color: #1A1A1A;
 }
 
 #root {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
 }
+
+/* ANIMATIONS */
 
 /* Loading spinner */
 .spinner {
@@ -35,9 +43,9 @@ body {
   }
 }
 
-/* Utility classes */
+/* Fade transitions */
 .fade-in {
-  animation: fadeIn 0.3s ease-in;
+  animation: fadeIn 150ms ease-in forwards;
 }
 
 @keyframes fadeIn {
@@ -48,3 +56,209 @@ body {
     opacity: 1;
   }
 }
+
+.fade-out {
+  animation: fadeOut 150ms ease-out forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Pulse animation for real-time updates */
+.pulse-subtle {
+  animation: pulseSubtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulseSubtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Shimmer skeleton loading */
+.shimmer {
+  background: linear-gradient(90deg, #E5E7EB 25%, #F3F4F6 50%, #E5E7EB 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* COMPONENTS */
+
+/* Buttons */
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-toyota-red text-white font-medium rounded-md transition-all duration-150;
+    @apply hover:bg-red-700 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary-sm {
+    @apply px-3 py-1.5 bg-toyota-red text-white font-medium rounded-md text-sm transition-all duration-150;
+    @apply hover:bg-red-700 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 bg-white text-charcoal border-2 border-charcoal font-medium rounded-md transition-all duration-150;
+    @apply hover:bg-charcoal hover:text-white active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-ghost {
+    @apply px-4 py-2 text-charcoal hover:bg-off-white font-medium rounded-md transition-all duration-150;
+    @apply active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-icon {
+    @apply w-10 h-10 flex items-center justify-center rounded-md transition-colors duration-150;
+    @apply hover:bg-off-white active:bg-silver-gray disabled:opacity-50;
+  }
+
+  /* Input fields */
+  .input-field {
+    @apply w-full px-4 py-2 border-2 border-silver-gray bg-white rounded-md;
+    @apply focus:outline-none focus:border-toyota-red focus:ring-2 focus:ring-toyota-red focus:ring-opacity-20;
+    @apply disabled:bg-off-white disabled:opacity-75 disabled:cursor-not-allowed;
+    @apply transition-colors duration-150;
+  }
+
+  .input-error {
+    @apply border-status-error focus:border-status-error focus:ring-status-error;
+  }
+
+  /* Form label */
+  .form-label {
+    @apply block text-sm font-label text-charcoal mb-1;
+  }
+
+  .form-label-required::after {
+    @apply text-toyota-red ml-1;
+    content: '*';
+  }
+
+  /* Status badges */
+  .badge-active {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800;
+  }
+
+  .badge-inactive {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800;
+  }
+
+  .badge-pending {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-white rounded-md p-5 shadow-card;
+  }
+
+  .card-lg {
+    @apply bg-white rounded-md p-6 shadow-card;
+  }
+
+  /* Tables */
+  .table-container {
+    @apply bg-white rounded-md shadow-card overflow-hidden;
+  }
+
+  .table-header {
+    @apply bg-off-white border-b-2 border-silver-gray;
+  }
+
+  .table-row {
+    @apply border-b border-silver-gray hover:bg-red-50 transition-colors duration-150;
+  }
+
+  .table-row:last-child {
+    @apply border-b-0;
+  }
+
+  .table-cell {
+    @apply px-6 py-4 text-sm text-charcoal;
+  }
+
+  .table-header-cell {
+    @apply px-6 py-3 text-left text-xs font-header text-charcoal;
+  }
+
+  /* Alert/Banner */
+  .alert-error {
+    @apply p-4 bg-red-50 border-l-4 border-toyota-red rounded text-sm text-charcoal;
+  }
+
+  .alert-warning {
+    @apply p-4 bg-amber-50 border-l-4 border-status-pending rounded text-sm text-charcoal;
+  }
+
+  .alert-success {
+    @apply p-4 bg-green-50 border-l-4 border-status-success rounded text-sm text-charcoal;
+  }
+
+  .alert-info {
+    @apply p-4 bg-blue-50 border-l-4 border-blue-500 rounded text-sm text-charcoal;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    @apply fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center;
+  }
+
+  .modal-content {
+    @apply bg-white rounded-md p-6 max-w-md w-full mx-4 shadow-card;
+  }
+
+  /* Drawer (side panel) */
+  .drawer {
+    @apply fixed right-0 top-0 h-screen w-full max-w-md bg-white shadow-lg z-50;
+    @apply transform transition-transform duration-300 ease-in-out;
+  }
+
+  .drawer.open {
+    @apply translate-x-0;
+  }
+
+  .drawer.closed {
+    @apply translate-x-full;
+  }
+
+  /* Header bar */
+  .header-bar {
+    @apply h-16 bg-white border-b-2 border-silver-gray flex items-center justify-between px-6 sticky top-0 z-10;
+  }
+}
+
+/* Utility animations for buttons */
+@layer utilities {
+  .scale-active {
+    @apply active:scale-95 transition-transform duration-150;
+  }
+
+  .transition-all-150 {
+    @apply transition-all duration-150;
+  }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+}
+

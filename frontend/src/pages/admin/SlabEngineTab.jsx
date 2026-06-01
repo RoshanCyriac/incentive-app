@@ -5,6 +5,7 @@ import {
   updateSlab,
   deleteSlab,
 } from '../../api/client';
+import { Button, Input, Alert, SkeletonLoader, EmptyState } from '../../components';
 
 export default function SlabEngineTab() {
   const [slabs, setSlabs] = useState([]);
@@ -13,6 +14,7 @@ export default function SlabEngineTab() {
   const [editingId, setEditingId] = useState(null);
   const [editFormData, setEditFormData] = useState({});
   const [warnings, setWarnings] = useState([]);
+  const [showConfirmSave, setShowConfirmSave] = useState(false);
 
   useEffect(() => {
     fetchSlabs();
@@ -67,6 +69,7 @@ export default function SlabEngineTab() {
       await updateSlab(slabId, editFormData);
       await fetchSlabs();
       setEditingId(null);
+      setShowConfirmSave(false);
     } catch (err) {
       setError('Failed to update slab');
       console.error(err);
@@ -100,71 +103,90 @@ export default function SlabEngineTab() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-header text-charcoal">Incentive Slabs</h2>
+          <div className="w-32 h-10 bg-off-white rounded-md shimmer"></div>
+        </div>
+        <div className="card">
+          <SkeletonLoader rows={4} columns={3} />
+        </div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* Warnings */}
+      {/* Warning Banner */}
       {warnings.length > 0 && (
-        <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <p className="font-semibold text-yellow-900 mb-2">⚠️ Slab Configuration Issues:</p>
-          <ul className="space-y-1">
+        <Alert type="warning" title="Configuration Issues">
+          <ul className="space-y-1 mt-2">
             {warnings.map((warning, idx) => (
-              <li key={idx} className="text-sm text-yellow-800">
+              <li key={idx} className="text-sm text-charcoal">
                 • {warning}
               </li>
             ))}
           </ul>
-        </div>
+        </Alert>
       )}
 
       {error && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-          {error}
-        </div>
+        <Alert type="error" message={error} onClose={() => setError(null)} />
       )}
 
       {/* Controls */}
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-gray-900">Incentive Slabs</h2>
-        <button
-          onClick={handleAddSlab}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
-        >
-          + Add Slab
-        </button>
+        <h2 className="text-xl font-header text-charcoal">Incentive Slabs</h2>
+        <Button variant="primary" onClick={handleAddSlab}>
+          ➕ Add Slab
+        </Button>
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                Min Qty
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                Max Qty
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                ₹ Per Car
-              </th>
-              <th className="px-6 py-3 text-right text-sm font-semibold text-gray-900">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {slabs.map((slab) => (
-              <tr key={slab.id} className="hover:bg-gray-50 transition">
+      {/* Visual Slab Builder */}
+      {slabs.length > 0 ? (
+        <div className="space-y-4">
+          {/* Tier Cards */}
+          {slabs.map((slab, index) => (
+            <div key={slab.id} className="relative">
+              {/* Connector Line */}
+              {index < slabs.length - 1 && (
+                <div className="absolute left-12 top-full w-1 h-6 bg-toyota-red -z-10"></div>
+              )}
+
+              <div className="card bg-white hover:shadow-lg transition-shadow">
                 {editingId === slab.id ? (
-                  <>
-                    <td className="px-6 py-4">
-                      <input
+                  // Edit Mode
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 bg-toyota-red rounded-full flex items-center justify-center text-white font-header text-sm">
+                        {index + 1}
+                      </div>
+                      <div className="flex-1">
+                        <span className="text-sm font-label text-charcoal">
+                          Slab {index + 1}
+                        </span>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setShowConfirmSave(true)}
+                        >
+                          ✓ Save
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setEditingId(null)}
+                        >
+                          ✕ Cancel
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-4 pt-4">
+                      <Input
+                        label="Min Units"
                         type="number"
                         value={editFormData.min_qty}
                         onChange={(e) =>
@@ -173,25 +195,21 @@ export default function SlabEngineTab() {
                             min_qty: parseInt(e.target.value),
                           })
                         }
-                        className="w-20 px-2 py-1 border border-gray-300 rounded"
                       />
-                    </td>
-                    <td className="px-6 py-4">
-                      <input
+                      <Input
+                        label="Max Units"
                         type="number"
                         value={editFormData.max_qty || ''}
+                        placeholder="Unlimited"
                         onChange={(e) =>
                           setEditFormData({
                             ...editFormData,
                             max_qty: e.target.value ? parseInt(e.target.value) : null,
                           })
                         }
-                        placeholder="Unlimited"
-                        className="w-20 px-2 py-1 border border-gray-300 rounded"
                       />
-                    </td>
-                    <td className="px-6 py-4">
-                      <input
+                      <Input
+                        label="₹ Per Unit"
                         type="number"
                         step="0.01"
                         value={editFormData.incentive_per_car}
@@ -201,84 +219,104 @@ export default function SlabEngineTab() {
                             incentive_per_car: parseFloat(e.target.value),
                           })
                         }
-                        className="w-24 px-2 py-1 border border-gray-300 rounded"
                       />
-                    </td>
-                    <td className="px-6 py-4 text-right space-x-2">
-                      <button
-                        onClick={() => handleSave(slab.id)}
-                        className="text-green-600 hover:text-green-800 text-sm font-medium"
-                      >
-                        Save
-                      </button>
-                      <button
-                        onClick={() => setEditingId(null)}
-                        className="text-gray-600 hover:text-gray-800 text-sm font-medium"
-                      >
-                        Cancel
-                      </button>
-                    </td>
-                  </>
+                    </div>
+                  </div>
                 ) : (
-                  <>
-                    <td className="px-6 py-4 text-sm text-gray-900 font-medium">
-                      {slab.min_qty}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
-                      {slab.max_qty === null ? '∞ (Unlimited)' : slab.max_qty}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900 font-medium">
-                      ₹{parseFloat(slab.incentive_per_car).toLocaleString('en-IN')}
-                    </td>
-                    <td className="px-6 py-4 text-right space-x-2">
-                      <button
+                  // View Mode
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4 flex-1">
+                      <div className="w-12 h-12 bg-off-white rounded-full flex items-center justify-center">
+                        <span className="text-lg font-header text-toyota-red">
+                          {index + 1}
+                        </span>
+                      </div>
+
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-header text-charcoal">
+                            Slab {index + 1}
+                          </span>
+                          <span className="badge-active text-xs">Active</span>
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          {slab.min_qty} – {slab.max_qty === null ? '∞' : slab.max_qty} cars
+                        </p>
+                      </div>
+
+                      <div className="text-right">
+                        <p className="text-2xl font-header text-toyota-red">
+                          ₹{Math.round(slab.incentive_per_car).toLocaleString('en-IN')}
+                        </p>
+                        <p className="text-xs text-gray-500 font-label">per car</p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2 ml-4">
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => handleEdit(slab)}
-                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                       >
-                        Edit
-                      </button>
-                      <button
+                        ✎ Edit
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => handleDelete(slab.id)}
-                        className="text-red-600 hover:text-red-800 text-sm font-medium"
+                        className="text-status-error"
                       >
-                        Delete
-                      </button>
-                    </td>
-                  </>
+                        🗑 Delete
+                      </Button>
+                    </div>
+                  </div>
                 )}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {slabs.length === 0 && (
-          <div className="text-center py-12 text-gray-500">
-            No slabs configured. Create one to get started.
-          </div>
-        )}
-      </div>
-
-      {/* Preview Card */}
-      {slabs.length > 0 && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="font-semibold text-blue-900 mb-4">Slab Preview</h3>
-          <div className="space-y-3">
-            {slabs.map((slab) => (
-              <div
-                key={slab.id}
-                className="flex items-center justify-between p-3 bg-white rounded border border-blue-100"
-              >
-                <span className="text-sm text-gray-700">
-                  {slab.min_qty} -{' '}
-                  {slab.max_qty === null ? '∞' : slab.max_qty} cars
-                </span>
-                <span className="font-semibold text-blue-600">
-                  ₹{parseFloat(slab.incentive_per_car).toLocaleString('en-IN')} each
-                </span>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
+
+          {/* Confirmation Modal */}
+          {showConfirmSave && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+              <div className="bg-white rounded-md p-6 max-w-sm mx-4 shadow-card">
+                <h3 className="text-lg font-header text-charcoal mb-3">
+                  ⚠️ Confirm Changes
+                </h3>
+                <p className="text-sm text-gray-600 mb-6">
+                  Updating slab configuration will affect all active calculations and
+                  incentive payouts. This action is immediate and cannot be undone.
+                </p>
+                <div className="flex gap-3 justify-end">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => setShowConfirmSave(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => handleSave(editingId)}
+                  >
+                    Confirm Update
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
+      ) : (
+        <EmptyState
+          icon="📊"
+          title="No Slabs Configured"
+          message="Create incentive slabs to define how sales officers are rewarded based on performance."
+          action={
+            <Button variant="primary" onClick={handleAddSlab}>
+              ➕ Create First Slab
+            </Button>
+          }
+        />
       )}
     </div>
   );

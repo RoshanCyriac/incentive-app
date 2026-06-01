@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { getUsers, createUser } from '../../api/client';
+import {
+  Button,
+  Input,
+  Badge,
+  Modal,
+  Alert,
+  SkeletonLoader,
+  EmptyState,
+} from '../../components';
 
 export default function OfficersTab() {
   const [officers, setOfficers] = useState([]);
@@ -11,7 +20,7 @@ export default function OfficersTab() {
     email: '',
     password: '',
   });
-  const [formError, setFormError] = useState(null);
+  const [formErrors, setFormErrors] = useState({});
 
   useEffect(() => {
     fetchOfficers();
@@ -34,23 +43,24 @@ export default function OfficersTab() {
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    setFormError(null);
+    if (formErrors[name]) {
+      setFormErrors((prev) => ({ ...prev, [name]: '' }));
+    }
   };
 
   const validateForm = () => {
+    const errors = {};
     if (!formData.name.trim()) {
-      setFormError('Name is required');
-      return false;
+      errors.name = 'Full name is required';
     }
     if (!formData.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      setFormError('Valid email is required');
-      return false;
+      errors.email = 'Valid email is required';
     }
-    if (formData.password.length < 8) {
-      setFormError('Password must be at least 8 characters');
-      return false;
+    if (!formData.password || formData.password.length < 8) {
+      errors.password = 'Password must be at least 8 characters';
     }
-    return true;
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e) => {
@@ -68,16 +78,23 @@ export default function OfficersTab() {
       await fetchOfficers();
       setShowModal(false);
       setFormData({ name: '', email: '', password: '' });
+      setFormErrors({});
     } catch (err) {
-      setFormError(err.response?.data?.detail || 'Failed to create officer');
+      setError(err.response?.data?.detail || 'Failed to create officer');
       console.error(err);
     }
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-header text-charcoal">Sales Officers</h2>
+          <div className="w-32 h-10 bg-off-white rounded-md shimmer"></div>
+        </div>
+        <div className="card">
+          <SkeletonLoader rows={5} columns={4} />
+        </div>
       </div>
     );
   }
@@ -85,159 +102,140 @@ export default function OfficersTab() {
   return (
     <div>
       {error && (
-        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-          {error}
+        <div className="mb-6">
+          <Alert type="error" message={error} onClose={() => setError(null)} />
         </div>
       )}
 
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-900">Sales Officers</h2>
-        <button
-          onClick={() => setShowModal(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
-        >
-          + Create Officer
-        </button>
+        <h2 className="text-xl font-header text-charcoal">Sales Officers</h2>
+        <Button variant="primary" onClick={() => setShowModal(true)}>
+          ➕ Create Officer
+        </Button>
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                Name
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                Email
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                Joined
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {officers.map((officer) => (
-              <tr key={officer.id} className="hover:bg-gray-50 transition">
-                <td className="px-6 py-4 text-sm text-gray-900 font-medium">
-                  {officer.name}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-600">
-                  {officer.email}
-                </td>
-                <td className="px-6 py-4 text-sm">
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      officer.is_active
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-gray-100 text-gray-800'
-                    }`}
-                  >
-                    {officer.is_active ? 'Active' : 'Inactive'}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-600">
-                  {new Date(officer.created_at).toLocaleDateString()}
-                </td>
+      {officers.length > 0 ? (
+        <div className="table-container">
+          <table className="w-full">
+            <thead className="table-header sticky top-0">
+              <tr>
+                <th className="table-header-cell">Name</th>
+                <th className="table-header-cell">Email</th>
+                <th className="table-header-cell">Status</th>
+                <th className="table-header-cell">Joined</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {officers.length === 0 && (
-          <div className="text-center py-12 text-gray-500">
-            No officers found. Create one to get started.
-          </div>
-        )}
-      </div>
+            </thead>
+            <tbody>
+              {officers.map((officer, idx) => (
+                <tr key={officer.id} className={`${idx % 2 === 0 ? 'bg-white' : 'bg-off-white'} table-row`}>
+                  <td className="table-cell font-label text-charcoal">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-toyota-red rounded-full flex items-center justify-center text-white font-header text-sm flex-shrink-0">
+                        {officer.name.charAt(0).toUpperCase()}
+                      </div>
+                      <span>{officer.name}</span>
+                    </div>
+                  </td>
+                  <td className="table-cell text-gray-600">{officer.email}</td>
+                  <td className="table-cell">
+                    <Badge
+                      status={officer.is_active ? 'active' : 'inactive'}
+                      label={officer.is_active ? 'Active' : 'Inactive'}
+                    />
+                  </td>
+                  <td className="table-cell text-gray-600 text-sm">
+                    {new Date(officer.created_at).toLocaleDateString('en-IN', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <EmptyState
+          icon="👤"
+          title="No Sales Officers"
+          message="Create your first sales officer to start tracking incentives and performance."
+          action={
+            <Button variant="primary" onClick={() => setShowModal(true)}>
+              ➕ Create First Officer
+            </Button>
+          }
+        />
+      )}
 
       {/* Create Officer Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Create New Officer</h3>
+      <Modal
+        isOpen={showModal}
+        title="Create New Sales Officer"
+        onClose={() => {
+          setShowModal(false);
+          setFormData({ name: '', email: '', password: '' });
+          setFormErrors({});
+        }}
+        actions={[
+          <Button
+            key="cancel"
+            variant="ghost"
+            onClick={() => {
+              setShowModal(false);
+              setFormData({ name: '', email: '', password: '' });
+              setFormErrors({});
+            }}
+            size="sm"
+          >
+            Cancel
+          </Button>,
+          <Button key="create" variant="primary" onClick={handleSubmit} size="sm">
+            Create Officer
+          </Button>,
+        ]}
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <Input
+            label="Full Name"
+            name="name"
+            type="text"
+            placeholder="John Doe"
+            value={formData.name}
+            onChange={handleFormChange}
+            error={formErrors.name}
+            required
+          />
 
-            {formError && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
-                {formError}
-              </div>
-            )}
+          <Input
+            label="Email Address"
+            name="email"
+            type="email"
+            placeholder="john.doe@toyota.com"
+            value={formData.email}
+            onChange={handleFormChange}
+            error={formErrors.email}
+            required
+          />
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Full Name *
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleFormChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="John Doe"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email Address *
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleFormChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="john@example.com"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Password *
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleFormChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="••••••••"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Minimum 8 characters
-                </p>
-              </div>
-
-              <div className="flex gap-3 pt-4">
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
-                >
-                  Create
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowModal(false);
-                    setFormData({ name: '', email: '', password: '' });
-                    setFormError(null);
-                  }}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+          <div>
+            <Input
+              label="Password"
+              name="password"
+              type="password"
+              placeholder="••••••••"
+              value={formData.password}
+              onChange={handleFormChange}
+              error={formErrors.password}
+              required
+            />
+            <p className="text-xs text-gray-500 mt-2">
+              Minimum 8 characters required
+            </p>
           </div>
-        </div>
-      )}
+        </form>
+      </Modal>
     </div>
   );
 }
