@@ -1,89 +1,102 @@
 import React from 'react';
+import { IconCar } from './icons';
 
 /**
- * Sidebar layout component
+ * Fixed admin sidebar (220px)
  */
-export default function Sidebar({ isOpen, items, activeItem, onItemClick, userSection, onToggle }) {
+export default function Sidebar({ items, activeItem, onItemClick, userSection }) {
   return (
-    <div
-      style={{
-        width: isOpen ? '240px' : '80px',
-        transition: 'width 300ms',
-        borderRightColor: '#EB0A1E',
-      }}
-      className="bg-charcoal text-white flex flex-col h-screen border-r-4"
+    <aside
+      className="flex flex-col h-screen shrink-0"
+      style={{ width: '220px', backgroundColor: '#1A1A1A' }}
     >
-      {/* Logo/Brand */}
-      <div className="p-4 border-b border-gray-700 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div
-            style={{ backgroundColor: '#EB0A1E' }}
-            className="w-10 h-10 rounded-md flex items-center justify-center font-bold text-white text-sm"
+      {/* Logo */}
+      <div
+        className="flex items-center gap-2.5"
+        style={{
+          padding: '18px 16px',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+        }}
+      >
+        <div
+          className="flex items-center justify-center shrink-0"
+          style={{
+            width: '30px',
+            height: '30px',
+            backgroundColor: '#EB0A1E',
+            borderRadius: '6px',
+          }}
+        >
+          <IconCar size={16} className="text-white" />
+        </div>
+        <div className="min-w-0">
+          <p
+            className="text-white leading-tight"
+            style={{ fontSize: '13.5px', fontWeight: 500 }}
           >
-            T
-          </div>
-          {isOpen && (
-            <div>
-              <p className="font-semibold text-sm text-white">Toyota</p>
-              <p className="text-xs text-gray-300">Incentive</p>
-            </div>
-          )}
+            Toyota
+          </p>
+          <p
+            className="leading-tight"
+            style={{ fontSize: '11px', color: 'rgba(255,255,255,0.45)' }}
+          >
+            Incentive Calculator
+          </p>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-        {items.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => onItemClick(item.id)}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-md transition-all duration-150"
-            style={
-              activeItem === item.id
-                ? {
-                    backgroundColor: '#EB0A1E',
-                    color: 'white',
-                    borderLeft: '4px solid white',
-                  }
-                : {
-                    color: '#D1D5DB',
-                  }
-            }
-            onMouseEnter={(e) => {
-              if (activeItem !== item.id) {
-                e.target.style.backgroundColor = '#374151';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (activeItem !== item.id) {
-                e.target.style.backgroundColor = 'transparent';
-              }
-            }}
-            title={!isOpen ? item.label : ''}
-          >
-            <span className="text-lg flex-shrink-0">{item.icon}</span>
-            {isOpen && <span className="text-sm font-medium">{item.label}</span>}
-          </button>
-        ))}
+      <nav style={{ padding: '10px 8px' }} className="flex-1 overflow-y-auto">
+        {items.map((item) => {
+          const isActive = activeItem === item.id;
+          const NavIcon = item.icon;
+          const iconNode =
+            typeof NavIcon === 'function' ? (
+              <NavIcon size={16} className="shrink-0" />
+            ) : typeof NavIcon === 'string' ? (
+              <span className="shrink-0 text-base leading-none">{NavIcon}</span>
+            ) : null;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => onItemClick(item.id)}
+              className="w-full flex items-center transition-colors"
+              style={{
+                gap: '10px',
+                padding: '9px 10px',
+                borderRadius: '6px',
+                fontSize: '13px',
+                marginBottom: '2px',
+                borderLeft: '3px solid',
+                borderLeftColor: isActive ? '#EB0A1E' : 'transparent',
+                backgroundColor: isActive ? 'rgba(235,10,30,0.12)' : 'transparent',
+                color: isActive ? '#fff' : 'rgba(255,255,255,0.55)',
+              }}
+              onMouseEnter={(e) => {
+                if (!isActive) {
+                  e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)';
+                  e.currentTarget.style.color = 'rgba(255,255,255,0.85)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive) {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = 'rgba(255,255,255,0.55)';
+                }
+              }}
+            >
+              {iconNode}
+              <span>{item.label}</span>
+            </button>
+          );
+        })}
       </nav>
 
-      {/* User Section */}
+      {/* User section */}
       {userSection && (
-        <div className="p-4 border-t border-gray-700 space-y-3">
-          {isOpen && userSection}
-        </div>
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>{userSection}</div>
       )}
-
-      {/* Toggle Sidebar */}
-      <div className="p-2 border-t border-gray-700">
-        <button
-          onClick={onToggle}
-          className="w-full p-2 hover:bg-gray-800 rounded-md transition text-white text-center"
-          title={isOpen ? 'Collapse' : 'Expand'}
-        >
-          {isOpen ? '◄' : '►'}
-        </button>
-      </div>
-    </div>
+    </aside>
   );
 }
