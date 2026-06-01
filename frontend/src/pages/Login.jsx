@@ -76,76 +76,100 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-[100dvh] bg-off-white overflow-x-hidden">
-      {/* Brand panel — desktop only */}
-      <div className="hidden lg:flex lg:w-1/2 bg-toyota-red flex-col items-center justify-center p-8 xl:p-12 relative overflow-hidden">
-        <div className="relative z-10 text-center max-w-md">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-white/10 mb-6">
-            <IconCar size={32} className="text-white" />
-          </div>
-          <h1 className="text-3xl xl:text-4xl font-semibold text-white mb-2">Toyota</h1>
-          <p className="text-white/90 font-medium text-lg">Smart Incentive Calculator</p>
-          <p className="text-white/75 text-sm mt-3">
-            Dealer Portal for Sales Incentive Management
-          </p>
-        </div>
-        <p className="absolute bottom-6 text-white/75 text-xs">Smart Incentive Calculator v1.0</p>
-      </div>
+    <div
+      className="relative min-h-[100dvh] flex items-center justify-center p-4 sm:p-6 overflow-hidden"
+      style={{ backgroundColor: '#EDEDED' }}
+    >
+      {/* Subtle background pattern */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.4]"
+        style={{
+          backgroundImage:
+            'radial-gradient(circle at 20% 20%, rgba(235,10,30,0.06) 0%, transparent 45%), radial-gradient(circle at 80% 80%, rgba(26,26,26,0.04) 0%, transparent 40%)',
+        }}
+      />
+      <div
+        className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] opacity-30"
+        style={{
+          background: 'radial-gradient(ellipse at center top, rgba(235,10,30,0.12), transparent 70%)',
+        }}
+      />
 
-      {/* Form panel */}
-      <div className="w-full lg:w-1/2 flex flex-col min-h-[100dvh]">
-        {/* Mobile brand strip */}
-        <div className="lg:hidden bg-toyota-red px-4 py-5 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-white/15 flex items-center justify-center shrink-0">
-            <IconCar size={20} className="text-white" />
-          </div>
-          <div>
-            <p className="text-white font-semibold text-base leading-tight">Toyota</p>
-            <p className="text-white/75 text-xs">Incentive Calculator</p>
-          </div>
-        </div>
+      <div className="relative w-full max-w-[400px]">
+        {/* Login card */}
+        <div
+          className="bg-white rounded-2xl overflow-hidden"
+          style={{ border: '0.5px solid #E0E0E0' }}
+        >
+          {/* Card header accent */}
+          <div className="h-1 bg-[#EB0A1E]" />
 
-        <div className="flex-1 flex flex-col items-center justify-center px-4 py-8 sm:px-8 sm:py-10">
-          <div className="w-full max-w-md">
-            <div className="mb-6 sm:mb-8">
-              <h2 className="text-xl sm:text-2xl font-semibold text-charcoal mb-1">
-                {userRole === 'admin' ? 'Admin Login' : 'Sales Portal'}
-              </h2>
-              <p className="text-sm text-gray-500">Enter your credentials to continue</p>
+          <div className="px-6 pt-7 pb-6 sm:px-8 sm:pt-8 sm:pb-7">
+            {/* Brand — centered */}
+            <div className="flex flex-col items-center text-center mb-7">
+              <div
+                className="flex items-center justify-center w-14 h-14 rounded-xl mb-4"
+                style={{ backgroundColor: '#EB0A1E' }}
+              >
+                <IconCar size={28} className="text-white" />
+              </div>
+              <h1 className="text-xl font-semibold text-charcoal tracking-tight">Toyota</h1>
+              <p className="text-sm text-[#888] mt-0.5">Incentive Calculator</p>
             </div>
 
-            <div className="mb-6 flex gap-2 bg-off-white p-1 rounded-md">
+            <div className="text-center mb-6">
+              <h2 className="text-lg font-semibold text-charcoal">
+                {userRole === 'admin' ? 'Admin sign in' : 'Officer sign in'}
+              </h2>
+              <p className="text-sm text-[#888] mt-1">Enter your credentials to continue</p>
+            </div>
+
+            {/* Role toggle */}
+            <div
+              className="flex gap-1 p-1 rounded-lg mb-6"
+              style={{ backgroundColor: '#F4F4F4' }}
+            >
               <button
                 type="button"
                 onClick={() => setUserRole('admin')}
-                className={`flex-1 py-2.5 px-3 rounded-md text-sm font-medium border-none cursor-pointer transition-all ${
+                className={`flex-1 py-2 px-3 rounded-md text-sm font-medium border-none cursor-pointer transition-all duration-150 ${
                   userRole === 'admin'
-                    ? 'bg-white text-toyota-red shadow-sm'
-                    : 'bg-transparent text-charcoal'
+                    ? 'bg-white text-[#EB0A1E] font-semibold'
+                    : 'bg-transparent text-[#666] hover:text-charcoal'
                 }`}
+                style={
+                  userRole === 'admin'
+                    ? { boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }
+                    : undefined
+                }
               >
                 Admin
               </button>
               <button
                 type="button"
                 onClick={() => setUserRole('officer')}
-                className={`flex-1 py-2.5 px-3 rounded-md text-sm font-medium border-none cursor-pointer transition-all ${
+                className={`flex-1 py-2 px-3 rounded-md text-sm font-medium border-none cursor-pointer transition-all duration-150 ${
                   userRole === 'officer'
-                    ? 'bg-white text-toyota-red shadow-sm'
-                    : 'bg-transparent text-charcoal'
+                    ? 'bg-white text-[#EB0A1E] font-semibold'
+                    : 'bg-transparent text-[#666] hover:text-charcoal'
                 }`}
+                style={
+                  userRole === 'officer'
+                    ? { boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }
+                    : undefined
+                }
               >
                 Officer
               </button>
             </div>
 
             {error && (
-              <div className="mb-6">
+              <div className="mb-5">
                 <Alert type="error" message={error} />
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <Input
                 label="Email Address"
                 name="email"
@@ -172,13 +196,13 @@ export default function Login() {
                     onChange={handleChange}
                     disabled={isLoading}
                     placeholder="••••••••"
-                    className={`input-field pr-12 ${validationErrors.password ? 'input-error' : ''}`}
+                    className={`input-field pr-14 ${validationErrors.password ? 'input-error' : ''}`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     disabled={isLoading}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-charcoal disabled:opacity-50 bg-transparent border-none cursor-pointer text-sm"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-[#888] hover:text-charcoal disabled:opacity-50 bg-transparent border-none cursor-pointer px-1"
                   >
                     {showPassword ? 'Hide' : 'Show'}
                   </button>
@@ -188,26 +212,41 @@ export default function Login() {
                 )}
               </div>
 
-              <Button type="submit" disabled={isLoading} variant="primary" className="w-full mt-2">
+              <Button
+                type="submit"
+                disabled={isLoading}
+                variant="primary"
+                className="w-full mt-1 py-2.5"
+              >
                 {isLoading ? 'Signing in...' : 'Sign In'}
               </Button>
             </form>
 
-            <div className="mt-6 p-4 bg-off-white rounded-md border-l-4 border-toyota-red">
-              <p className="text-xs font-semibold text-charcoal mb-2">Demo Credentials:</p>
-              <p className="text-xs text-gray-600">
-                <span className="font-medium">Email:</span> admin@toyota.com
+            <div
+              className="mt-6 p-3.5 rounded-lg text-center"
+              style={{
+                backgroundColor: '#FAFAFA',
+                border: '0.5px solid #EEEEEE',
+              }}
+            >
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#999] mb-2">
+                Demo access
               </p>
-              <p className="text-xs text-gray-600">
-                <span className="font-medium">Password:</span> password123
+              <p className="text-xs text-[#666]">
+                <span className="text-[#888]">Email</span>{' '}
+                <span className="font-medium text-charcoal">admin@toyota.com</span>
+              </p>
+              <p className="text-xs text-[#666] mt-0.5">
+                <span className="text-[#888]">Password</span>{' '}
+                <span className="font-medium text-charcoal">password123</span>
               </p>
             </div>
           </div>
-
-          <p className="text-center text-gray-500 text-xs mt-8 px-4">
-            © 2026 Toyota Smart Incentive Calculator. All rights reserved.
-          </p>
         </div>
+
+        <p className="text-center text-[#999] text-[11px] mt-5 px-2">
+          © 2026 Toyota Smart Incentive Calculator
+        </p>
       </div>
     </div>
   );

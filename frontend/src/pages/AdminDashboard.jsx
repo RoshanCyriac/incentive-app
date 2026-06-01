@@ -127,7 +127,7 @@ export default function AdminDashboard() {
       onItemClick={setActiveTab}
       userSection={userSection}
       headerTitle={headerMeta.title}
-      headerTitleIcon={TitleIcon ? <TitleIcon size={16} /> : null}
+      headerTitleIcon={TitleIcon ? <TitleIcon size={18} /> : null}
       headerBreadcrumb={headerMeta.breadcrumb}
       welcomeName={displayName}
       roleBadge={roleLabel}
