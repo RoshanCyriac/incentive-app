@@ -8,7 +8,7 @@ import {
   getOfficerSlabs,
 } from '../api/client';
 import { DashboardLayout, Alert } from '../components';
-import { IconLogOut } from '../components/icons';
+import { IconBarChart, IconLayoutGrid } from '../components/icons';
 import {
   getUserDisplayName,
   getUserInitials,
@@ -33,8 +33,8 @@ const MONTHS = [
 const YEARS = [2024, 2025, 2026];
 
 const NAV_ITEMS = [
-  { id: 'sales', label: 'Sales Entry', icon: '📝' },
-  { id: 'breakdown', label: 'Incentive Breakdown', icon: '📊' },
+  { id: 'sales', label: 'Sales Entry', icon: IconLayoutGrid },
+  { id: 'breakdown', label: 'Incentive Breakdown', icon: IconBarChart },
 ];
 
 export default function OfficerDashboard() {
@@ -200,52 +200,6 @@ export default function OfficerDashboard() {
     </div>
   );
 
-  const userSection = (
-    <div className="flex items-center gap-2.5" style={{ padding: '12px 16px' }}>
-      <div
-        className="flex items-center justify-center shrink-0 rounded-full text-white"
-        style={{
-          width: '32px',
-          height: '32px',
-          backgroundColor: '#EB0A1E',
-          fontSize: '11px',
-          fontWeight: 500,
-        }}
-      >
-        {getUserInitials(displayName)}
-      </div>
-      <div className="flex-1 min-w-0">
-        <p
-          className="text-white truncate leading-tight"
-          style={{ fontSize: '12.5px', fontWeight: 500 }}
-        >
-          {displayName}
-        </p>
-        <p
-          className="truncate leading-tight"
-          style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}
-        >
-          {roleLabel}
-        </p>
-      </div>
-      <button
-        type="button"
-        onClick={logout}
-        className="shrink-0 flex items-center justify-center transition-colors"
-        style={{
-          border: '0.5px solid rgba(255,255,255,0.2)',
-          borderRadius: '5px',
-          padding: '5px 8px',
-          color: 'rgba(255,255,255,0.5)',
-          background: 'transparent',
-        }}
-        aria-label="Log out"
-      >
-        <IconLogOut size={14} />
-      </button>
-    </div>
-  );
-
   if (loading) {
     return (
       <div className="flex h-[100dvh] bg-off-white items-center justify-center p-4">
@@ -267,7 +221,10 @@ export default function OfficerDashboard() {
       sidebarItems={NAV_ITEMS}
       activeItem={activeTab}
       onItemClick={setActiveTab}
-      userSection={userSection}
+      userName={displayName}
+      userRole={roleLabel}
+      userInitials={getUserInitials(displayName)}
+      onLogout={logout}
       headerTitle={headerTitle}
       headerBreadcrumb={`Officer → ${activeTab === 'sales' ? 'Sales Entry' : 'Breakdown'}`}
       welcomeName={displayName}

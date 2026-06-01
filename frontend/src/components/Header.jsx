@@ -8,34 +8,23 @@ function BreadcrumbTrail({ breadcrumb }) {
   if (parts.length === 0) return null;
 
   return (
-    <nav className="flex items-center gap-1.5 flex-wrap mt-1.5" aria-label="Breadcrumb">
-      {parts.map((part, index) => {
-        const isLast = index === parts.length - 1;
-        return (
-          <React.Fragment key={`${part}-${index}`}>
-            {index > 0 && (
-              <span className="text-[#CCC] text-[11px] select-none" aria-hidden>
-                /
-              </span>
-            )}
-            <span
-              className={
-                isLast
-                  ? 'inline-flex items-center text-[12px] font-medium text-[#EB0A1E] bg-[#FFF0F1] px-2 py-0.5 rounded'
-                  : 'text-[12px] text-[#999]'
-              }
-            >
-              {part}
+    <nav className="flex items-center gap-1 mt-0.5" aria-label="Breadcrumb">
+      {parts.map((part, index) => (
+        <React.Fragment key={`${part}-${index}`}>
+          {index > 0 && (
+            <span className="text-[#D4D4D4] text-[11px] select-none px-0.5" aria-hidden>
+              /
             </span>
-          </React.Fragment>
-        );
-      })}
+          )}
+          <span className="text-[11px] text-[#A3A3A3] font-normal">{part}</span>
+        </React.Fragment>
+      ))}
     </nav>
   );
 }
 
 /**
- * Top header bar with prominent active page context
+ * Top header — clear title, subtle breadcrumb, secondary user area
  */
 export default function Header({
   title,
@@ -45,92 +34,77 @@ export default function Header({
   roleBadge,
   rightContent,
   onMenuClick,
+  onToggleSidebar,
+  sidebarCollapsed,
 }) {
   return (
-    <header
-      className="shrink-0 bg-white border-b border-[#E8E8E8] px-4 py-3.5 sm:px-5 lg:px-6 lg:py-3"
-      style={{ borderBottomWidth: '0.5px' }}
-    >
-      <div className="lg:flex lg:items-center lg:justify-between lg:gap-6">
-        <div className="flex items-start gap-3 min-w-0 flex-1">
+    <header className="shrink-0 bg-white border-b border-[#EAEAEA] px-4 py-3 sm:px-5 lg:px-6">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-2.5 min-w-0 flex-1">
           {onMenuClick && (
             <button
               type="button"
               onClick={onMenuClick}
-              className="lg:hidden shrink-0 flex items-center justify-center w-10 h-10 -ml-0.5 rounded-lg text-[#1A1A1A] border border-[#E8E8E8] bg-[#FAFAFA] hover:bg-[#F4F4F4] active:bg-[#EEE]"
+              className="lg:hidden shrink-0 flex items-center justify-center w-9 h-9 rounded-lg text-[#525252] border border-[#E5E5E5] bg-white hover:bg-[#FAFAFA] shadow-sm"
               aria-label="Open navigation menu"
             >
-              <IconMenu size={20} />
+              <IconMenu size={18} />
             </button>
           )}
 
-          <div className="min-w-0 flex-1">
-            <p
-              className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#AAA] mb-1.5 hidden sm:block"
+          {onToggleSidebar && (
+            <button
+              type="button"
+              onClick={onToggleSidebar}
+              className="hidden lg:flex shrink-0 items-center justify-center w-9 h-9 rounded-lg text-[#525252] border border-[#E5E5E5] bg-white hover:bg-[#FAFAFA]"
+              aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
-              Current page
-            </p>
+              <IconMenu size={18} />
+            </button>
+          )}
 
-            <div className="flex items-center gap-3 min-w-0">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 min-w-0">
               {titleIcon && (
-                <span
-                  className="flex items-center justify-center shrink-0 w-10 h-10 rounded-lg"
-                  style={{ backgroundColor: '#FFF0F1', color: '#EB0A1E' }}
-                >
+                <span className="hidden sm:flex items-center justify-center shrink-0 text-[#EB0A1E] opacity-90">
                   {titleIcon}
                 </span>
               )}
-              <div className="min-w-0">
-                <h1
-                  className="truncate leading-tight"
-                  style={{ fontSize: '17px', fontWeight: 600, color: '#1A1A1A' }}
-                >
-                  {title}
-                </h1>
-                <BreadcrumbTrail breadcrumb={breadcrumb} />
-              </div>
+              <h1 className="text-[18px] sm:text-[20px] font-semibold text-[#171717] truncate tracking-tight">
+                {title}
+              </h1>
             </div>
+            <BreadcrumbTrail breadcrumb={breadcrumb} />
           </div>
         </div>
 
         {rightContent ? (
-          <div className="mt-4 w-full min-w-0 lg:mt-0 lg:w-auto lg:max-w-[50%] lg:shrink-0 pt-3 lg:pt-0 border-t border-[#F0F0F0] lg:border-t-0">
-            {rightContent}
-          </div>
+          <div className="shrink-0 min-w-0 max-w-full sm:max-w-[55%]">{rightContent}</div>
         ) : (
-          <div className="mt-4 flex flex-wrap items-center gap-2 sm:gap-3 lg:mt-0 lg:shrink-0 pt-3 lg:pt-0 border-t border-[#F0F0F0] lg:border-t-0">
+          <div className="hidden sm:flex items-center gap-2.5 shrink-0 text-right">
             {welcomeName != null && welcomeName !== '' && (
-              <>
-                <span className="sm:hidden text-[13px] text-[#666] truncate max-w-[160px]">
-                  Hi, {welcomeName.split(' ')[0]}
-                </span>
-                <span
-                  className="hidden sm:inline truncate max-w-[220px] lg:max-w-[280px]"
-                  style={{ fontSize: '13px', color: '#666' }}
-                >
-                  Welcome back, {welcomeName}
-                </span>
-              </>
+              <span className="text-[13px] text-[#737373] truncate max-w-[200px]">
+                {welcomeName}
+              </span>
             )}
             {roleBadge && (
-              <span
-                className="shrink-0"
-                style={{
-                  backgroundColor: '#FFF0F1',
-                  color: '#A32D2D',
-                  fontSize: '11px',
-                  padding: '4px 12px',
-                  borderRadius: '20px',
-                  fontWeight: 500,
-                  border: '0.5px solid rgba(235,10,30,0.15)',
-                }}
-              >
+              <span className="text-[11px] font-medium text-[#737373] bg-[#F5F5F5] px-2.5 py-1 rounded-md border border-[#E5E5E5]">
                 {roleBadge}
               </span>
             )}
           </div>
         )}
       </div>
+
+      {/* Mobile user row */}
+      {!rightContent && welcomeName && (
+        <div className="sm:hidden flex items-center justify-between mt-2 pt-2 border-t border-[#F5F5F5]">
+          <span className="text-xs text-[#737373] truncate">{welcomeName}</span>
+          {roleBadge && (
+            <span className="text-[10px] text-[#737373] bg-[#F5F5F5] px-2 py-0.5 rounded">{roleBadge}</span>
+          )}
+        </div>
+      )}
     </header>
   );
 }

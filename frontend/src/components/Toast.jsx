@@ -36,21 +36,19 @@ export default function Toast({ message, type = 'success', autoClose = 4000, onC
 
   return (
     <div
+      role="status"
+      aria-live="polite"
+      className="fixed z-[9999] left-4 right-4 sm:left-auto sm:right-6 bottom-6 sm:top-6 sm:bottom-auto max-w-md mx-auto sm:mx-0"
       style={{
-        position: 'fixed',
-        top: '1.5rem',
-        right: '1.5rem',
         padding: '0.75rem 1rem',
-        borderRadius: '0.375rem',
+        borderRadius: '10px',
         borderLeft: `4px solid ${style.border}`,
         display: 'flex',
         alignItems: 'center',
         gap: '0.75rem',
-        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
-        zIndex: 9999,
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.12)',
         backgroundColor: style.bg,
         color: style.text,
-        maxWidth: '28rem',
         animation: 'fadeIn 150ms ease-in forwards',
       }}
     >

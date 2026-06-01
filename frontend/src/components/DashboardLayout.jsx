@@ -3,13 +3,17 @@ import Sidebar from './Sidebar';
 import Header from './Header';
 
 /**
- * Shared admin/officer shell with mobile drawer navigation
+ * Shared admin/officer shell with mobile drawer + collapsible desktop sidebar
  */
 export default function DashboardLayout({
   sidebarItems,
   activeItem,
   onItemClick,
   userSection,
+  userName,
+  userRole,
+  userInitials,
+  onLogout,
   headerTitle,
   headerTitleIcon,
   headerBreadcrumb,
@@ -20,6 +24,7 @@ export default function DashboardLayout({
   mainClassName = '',
 }) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const closeMobileNav = useCallback(() => setMobileNavOpen(false), []);
 
@@ -56,13 +61,13 @@ export default function DashboardLayout({
 
   return (
     <div
-      className="flex h-[100dvh] overflow-hidden font-sans"
-      style={{ backgroundColor: '#F4F4F4', fontFamily: 'Inter, system-ui, sans-serif' }}
+      className="flex h-[100dvh] overflow-hidden font-sans bg-[#F5F5F5]"
+      style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
     >
       {mobileNavOpen && (
         <button
           type="button"
-          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
           onClick={closeMobileNav}
           aria-label="Close navigation menu"
         />
@@ -73,8 +78,14 @@ export default function DashboardLayout({
         activeItem={activeItem}
         onItemClick={handleItemClick}
         userSection={userSection}
+        userName={userName}
+        userRole={userRole}
+        userInitials={userInitials}
+        onLogout={onLogout}
         mobileOpen={mobileNavOpen}
         onMobileClose={closeMobileNav}
+        collapsed={sidebarCollapsed}
+        onToggleCollapse={() => setSidebarCollapsed((c) => !c)}
       />
 
       <div className="flex flex-1 flex-col min-w-0 overflow-hidden">
@@ -86,12 +97,14 @@ export default function DashboardLayout({
           roleBadge={roleBadge}
           rightContent={headerRightContent}
           onMenuClick={() => setMobileNavOpen(true)}
+          onToggleSidebar={() => setSidebarCollapsed((c) => !c)}
+          sidebarCollapsed={sidebarCollapsed}
         />
 
         <main
-          className={`flex-1 overflow-x-hidden overflow-y-auto px-4 py-4 sm:px-5 sm:py-5 lg:px-6 lg:py-5 ${mainClassName}`}
+          className={`flex-1 overflow-x-hidden overflow-y-auto px-4 py-4 sm:px-6 sm:py-5 ${mainClassName}`}
         >
-          {children}
+          <div className="mx-auto w-full max-w-[1280px]">{children}</div>
         </main>
       </div>
     </div>
