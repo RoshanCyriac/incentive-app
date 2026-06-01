@@ -1,31 +1,19 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   getCars,
   createCar,
   updateCar,
   deleteCar,
 } from '../../api/client';
-import {
-  Button,
-  Input,
-  Modal,
-  Alert,
-  Toast,
-} from '../../components';
+import { Button, Input, Modal, Alert, Toast } from '../../components';
 import {
   IconCar,
   IconSearch,
   IconPlus,
   IconPencil,
   IconTrash,
-  IconCheckCircle,
-  IconXCircle,
-  IconMoreVertical,
-  IconChevronLeft,
-  IconChevronRight,
-  IconLayers,
-  IconFilter,
 } from '../../components/icons';
+import './CarInventory.css';
 
 const PAGE_SIZE = 10;
 
@@ -38,155 +26,134 @@ function toTitleCase(str) {
     .join(' ');
 }
 
-function StatCard({ label, value, icon: Icon, accent = 'neutral' }) {
-  const accents = {
-    neutral: {
-      bar: 'from-slate-500 to-slate-400',
-      bg: 'from-slate-50 to-white',
-      iconBg: 'bg-slate-100',
-      icon: 'text-slate-600',
-      value: 'text-slate-900',
-    },
-    green: {
-      bar: 'from-emerald-500 to-emerald-400',
-      bg: 'from-emerald-50/80 to-white',
-      iconBg: 'bg-emerald-100',
-      icon: 'text-emerald-600',
-      value: 'text-emerald-900',
-    },
-    red: {
-      bar: 'from-red-500 to-[#EB0A1E]',
-      bg: 'from-red-50/80 to-white',
-      iconBg: 'bg-red-100',
-      icon: 'text-[#EB0A1E]',
-      value: 'text-red-900',
-    },
-    blue: {
-      bar: 'from-blue-500 to-indigo-400',
-      bg: 'from-blue-50/80 to-white',
-      iconBg: 'bg-blue-100',
-      icon: 'text-blue-600',
-      value: 'text-blue-900',
-    },
-  };
-  const a = accents[accent] || accents.neutral;
-
-  return (
-    <div
-      className={`relative overflow-hidden rounded-xl border border-slate-200/80 bg-gradient-to-br ${a.bg} p-4 shadow-md shadow-slate-200/50`}
-    >
-      <div className={`absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b ${a.bar}`} />
-      <div className="flex items-start justify-between gap-3 pl-2">
-        <div className="min-w-0">
-          <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{label}</p>
-          <p className={`text-2xl font-bold mt-1 tabular-nums ${a.value}`}>{value}</p>
-        </div>
-        <div className={`flex items-center justify-center w-11 h-11 rounded-xl shrink-0 ${a.iconBg}`}>
-          <Icon size={22} className={a.icon} />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function StatusPill({ active = true }) {
+function StatusBadge({ active = true }) {
   if (active) {
     return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200/80">
-        <IconCheckCircle size={14} className="text-emerald-600 shrink-0" aria-hidden />
+      <span
+        className="inline-flex items-center gap-1.5 shrink-0"
+        style={{
+          backgroundColor: '#EAF3DE',
+          color: '#27500A',
+          fontSize: '11.5px',
+          padding: '3px 10px',
+          borderRadius: '20px',
+          fontWeight: 500,
+        }}
+      >
+        <span
+          className="rounded-full shrink-0"
+          style={{ width: '5px', height: '5px', backgroundColor: '#3B6D11' }}
+        />
         Active
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#F5F5F5] text-[#525252] border border-[#E5E5E5]">
-      <IconXCircle size={14} className="text-[#737373] shrink-0" aria-hidden />
+    <span
+      className="inline-flex items-center gap-1.5 shrink-0"
+      style={{
+        backgroundColor: '#F1EFE8',
+        color: '#5F5E5A',
+        fontSize: '11.5px',
+        padding: '3px 10px',
+        borderRadius: '20px',
+        fontWeight: 500,
+      }}
+    >
+      <span
+        className="rounded-full shrink-0"
+        style={{ width: '5px', height: '5px', backgroundColor: '#5F5E5A' }}
+      />
       Inactive
     </span>
   );
 }
 
-function RowActionsMenu({ car, onEdit, onDelete }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    if (!open) return undefined;
-    const handleClick = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
-    };
-    const handleKey = (e) => {
-      if (e.key === 'Escape') setOpen(false);
-    };
-    document.addEventListener('mousedown', handleClick);
-    document.addEventListener('keydown', handleKey);
-    return () => {
-      document.removeEventListener('mousedown', handleClick);
-      document.removeEventListener('keydown', handleKey);
-    };
-  }, [open]);
-
+function ActionButtons({ car, onEdit, onDelete, compact }) {
+  const pad = compact ? '4px 8px' : '5px 10px';
   return (
-    <div className="relative" ref={ref}>
+    <div className="flex items-center gap-1.5 flex-wrap justify-end">
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="flex items-center justify-center w-8 h-8 rounded-lg border border-[#E5E5E5] bg-white text-[#525252] hover:bg-[#FAFAFA] hover:border-[#D4D4D4] transition-colors"
-        aria-label={`Actions for ${car.name}`}
-        aria-expanded={open}
-        aria-haspopup="true"
+        className="ci-btn-action inline-flex items-center gap-1 transition-colors"
+        style={{
+          border: '0.5px solid #D0D0D0',
+          borderRadius: '5px',
+          padding: pad,
+          fontSize: '12px',
+          color: '#444',
+          background: 'transparent',
+          cursor: 'pointer',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = '#185FA5';
+          e.currentTarget.style.color = '#185FA5';
+          e.currentTarget.style.backgroundColor = '#F0F4FF';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = '#D0D0D0';
+          e.currentTarget.style.color = '#444';
+          e.currentTarget.style.backgroundColor = 'transparent';
+        }}
+        onClick={() => onEdit(car)}
       >
-        <IconMoreVertical size={16} />
+        <IconPencil size={13} />
+        Edit
       </button>
-
-      {open && (
-        <div
-          className="absolute right-0 top-full mt-1 z-20 min-w-[140px] py-1 bg-white rounded-lg border border-[#E5E5E5] shadow-lg"
-          role="menu"
-        >
-          <button
-            type="button"
-            role="menuitem"
-            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-[#404040] hover:bg-[#F5F5F5] text-left"
-            onClick={() => {
-              setOpen(false);
-              onEdit(car);
-            }}
-          >
-            <IconPencil size={15} className="text-[#525252]" />
-            Edit model
-          </button>
-          <button
-            type="button"
-            role="menuitem"
-            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 text-left"
-            onClick={() => {
-              setOpen(false);
-              onDelete(car.id);
-            }}
-          >
-            <IconTrash size={15} />
-            Delete
-          </button>
-        </div>
-      )}
+      <button
+        type="button"
+        className="ci-btn-action inline-flex items-center gap-1 transition-colors"
+        style={{
+          border: '0.5px solid #F0C0C0',
+          borderRadius: '5px',
+          padding: pad,
+          fontSize: '12px',
+          color: '#A32D2D',
+          background: 'transparent',
+          cursor: 'pointer',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = '#FCEBEB';
+          e.currentTarget.style.borderColor = '#E24B4A';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = 'transparent';
+          e.currentTarget.style.borderColor = '#F0C0C0';
+        }}
+        onClick={() => onDelete(car.id)}
+      >
+        <IconTrash size={13} />
+        Delete
+      </button>
     </div>
   );
 }
 
-function TableSkeleton() {
+function ModelCard({ car, onEdit, onDelete }) {
   return (
-    <div className="animate-pulse divide-y divide-[#F0F0F0]">
-      {[1, 2, 3, 4, 5].map((i) => (
-        <div key={i} className="flex items-center gap-4 px-4 py-3.5">
-          <div className="w-8 h-8 rounded-lg bg-[#F0F0F0]" />
-          <div className="flex-1 space-y-2">
-            <div className="h-3.5 bg-[#F0F0F0] rounded w-1/3" />
-            <div className="h-3 bg-[#F5F5F5] rounded w-1/4" />
-          </div>
+    <article className="ci-model-card">
+      <div className="flex items-center gap-2.5 mb-2">
+        <div
+          className="flex items-center justify-center shrink-0 rounded-md"
+          style={{ width: '30px', height: '30px', backgroundColor: '#F4F4F4' }}
+        >
+          <IconCar size={15} style={{ color: '#888' }} />
         </div>
-      ))}
-    </div>
+        <span
+          className="flex-1 font-medium truncate"
+          style={{ fontSize: '13px', color: '#1A1A1A', fontWeight: 500 }}
+        >
+          {toTitleCase(car.name)}
+        </span>
+        <StatusBadge active={car.is_active !== false} />
+      </div>
+      <div className="flex items-center justify-between gap-2">
+        <span style={{ fontSize: '12px', color: '#888' }}>
+          {car.variant ? `Variant: ${toTitleCase(car.variant)}` : 'Variant: —'}
+        </span>
+        <ActionButtons car={car} onEdit={onEdit} onDelete={onDelete} compact />
+      </div>
+    </article>
   );
 }
 
@@ -200,14 +167,8 @@ export default function CarInventoryTab() {
   const [editingCar, setEditingCar] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [variantFilter, setVariantFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
-  const [formData, setFormData] = useState({
-    name: '',
-    base_suffix: '',
-    variant: '',
-  });
+  const [formData, setFormData] = useState({ name: '', base_suffix: '', variant: '' });
   const [formErrors, setFormErrors] = useState({});
 
   useEffect(() => {
@@ -216,7 +177,7 @@ export default function CarInventoryTab() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, statusFilter, variantFilter]);
+  }, [searchQuery]);
 
   const fetchCars = async () => {
     try {
@@ -232,53 +193,16 @@ export default function CarInventoryTab() {
     }
   };
 
-  const stats = useMemo(() => {
-    const active = cars.filter((c) => c.is_active !== false).length;
-    const inactive = cars.length - active;
-    const variants = new Set(
-      cars.map((c) => c.variant?.trim()).filter(Boolean)
-    );
-    return {
-      total: cars.length,
-      active,
-      inactive,
-      variants: variants.size,
-    };
-  }, [cars]);
-
-  const variantOptions = useMemo(() => {
-    const set = new Set();
-    cars.forEach((c) => {
-      if (c.variant?.trim()) set.add(c.variant.trim());
-    });
-    return Array.from(set).sort();
-  }, [cars]);
-
   const filteredCars = useMemo(() => {
-    let list = [...cars];
     const q = searchQuery.trim().toLowerCase();
-
-    if (q) {
-      list = list.filter(
-        (car) =>
-          car.name?.toLowerCase().includes(q) ||
-          car.base_suffix?.toLowerCase().includes(q) ||
-          car.variant?.toLowerCase().includes(q)
-      );
-    }
-
-    if (statusFilter === 'active') {
-      list = list.filter((c) => c.is_active !== false);
-    } else if (statusFilter === 'inactive') {
-      list = list.filter((c) => c.is_active === false);
-    }
-
-    if (variantFilter !== 'all') {
-      list = list.filter((c) => (c.variant || '').trim() === variantFilter);
-    }
-
-    return list;
-  }, [cars, searchQuery, statusFilter, variantFilter]);
+    if (!q) return cars;
+    return cars.filter(
+      (car) =>
+        car.name?.toLowerCase().includes(q) ||
+        car.base_suffix?.toLowerCase().includes(q) ||
+        car.variant?.toLowerCase().includes(q)
+    );
+  }, [cars, searchQuery]);
 
   const totalPages = Math.max(1, Math.ceil(filteredCars.length / PAGE_SIZE));
 
@@ -291,8 +215,15 @@ export default function CarInventoryTab() {
     if (currentPage > totalPages) setCurrentPage(totalPages);
   }, [currentPage, totalPages]);
 
-  const rangeStart = filteredCars.length === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1;
-  const rangeEnd = Math.min(currentPage * PAGE_SIZE, filteredCars.length);
+  const pageNumbers = useMemo(() => {
+    const pages = [];
+    const maxVisible = 5;
+    let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    let end = Math.min(totalPages, start + maxVisible - 1);
+    start = Math.max(1, end - maxVisible + 1);
+    for (let i = start; i <= end; i += 1) pages.push(i);
+    return pages;
+  }, [currentPage, totalPages]);
 
   const validateForm = () => {
     const errors = {};
@@ -333,7 +264,6 @@ export default function CarInventoryTab() {
   const handleSave = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-
     try {
       setSaving(true);
       if (editingCar) {
@@ -368,248 +298,297 @@ export default function CarInventoryTab() {
     }
   };
 
+  const footerCountText =
+    filteredCars.length === 0
+      ? 'Showing 0 of 0 models'
+      : `Showing ${paginatedCars.length} of ${filteredCars.length} models`;
+
   return (
-    <div className="space-y-5 pb-2">
+    <>
       {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
-        />
+        <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
       )}
 
       {error && (
-        <Alert type="error" message={error} onClose={() => setError(null)} />
+        <div className="mb-4">
+          <Alert type="error" message={error} onClose={() => setError(null)} />
+        </div>
       )}
 
-      {/* Summary cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {loading ? (
-          <>
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-[88px] rounded-xl bg-white border border-[#E5E5E5] animate-pulse" />
-            ))}
-          </>
-        ) : (
-          <>
-            <StatCard label="Total Models" value={stats.total} icon={IconCar} accent="neutral" />
-            <StatCard label="Active Models" value={stats.active} icon={IconCheckCircle} accent="green" />
-            <StatCard label="Inactive Models" value={stats.inactive} icon={IconXCircle} accent="red" />
-            <StatCard label="Variants" value={stats.variants} icon={IconLayers} accent="blue" />
-          </>
-        )}
-      </div>
-
-      {/* Main table card */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-lg shadow-slate-200/40 overflow-hidden">
-        {/* Section header + primary action */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-5 py-5 border-b border-slate-100 bg-gradient-to-r from-white via-red-50/30 to-white">
-          <div>
-            <h2 className="text-base font-bold text-slate-900">Car Models</h2>
-            <p className="text-sm text-slate-500 mt-0.5">
-              Manage vehicle models, variants, and availability
-            </p>
+      <div
+        className="bg-white overflow-hidden"
+        style={{
+          border: '0.5px solid #E5E5E5',
+          borderRadius: '10px',
+        }}
+      >
+        {/* Toolbar */}
+        <div
+          className="ci-toolbar-row flex flex-wrap items-center justify-between gap-3"
+          style={{
+            padding: '14px 16px',
+            borderBottom: '0.5px solid #F0F0F0',
+          }}
+        >
+          <div className="ci-toolbar-top flex items-center justify-between gap-2 w-full md:w-auto">
+            <div className="flex items-center gap-2">
+              <span style={{ fontSize: '14px', fontWeight: 500, color: '#1A1A1A' }}>
+                Car Models
+              </span>
+              <span
+                style={{
+                  backgroundColor: '#F4F4F4',
+                  color: '#666',
+                  fontSize: '11px',
+                  padding: '2px 8px',
+                  borderRadius: '20px',
+                }}
+              >
+                {cars.length} {cars.length === 1 ? 'model' : 'models'}
+              </span>
+            </div>
+            <AddModelButton
+              onClick={() => handleOpenModal()}
+              disabled={loading}
+              className="md:hidden"
+            />
           </div>
-          <button
-            type="button"
-            onClick={() => handleOpenModal()}
-            disabled={loading}
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold text-white rounded-xl transition-all shrink-0 self-start sm:self-auto disabled:opacity-50 hover:shadow-lg hover:shadow-red-300/40 hover:-translate-y-px active:translate-y-0"
-            style={{
-              background: 'linear-gradient(135deg, #EB0A1E 0%, #d40919 100%)',
-              boxShadow: '0 4px 14px rgba(235, 10, 30, 0.35)',
-            }}
-          >
-            <IconPlus size={17} />
-            Add Model
-          </button>
-        </div>
 
-        {/* Toolbar: search + filters */}
-        <div className="px-4 sm:px-5 py-3.5 border-b border-slate-100 bg-slate-50/80">
-          <div className="flex flex-col lg:flex-row lg:items-center gap-3">
-            <div className="relative w-full sm:max-w-[240px]">
+          <div className="ci-toolbar-actions flex items-center gap-2 w-full md:w-auto">
+            <div className="ci-search-wrap relative" style={{ width: '180px' }}>
               <IconSearch
-                size={15}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A3A3A3] pointer-events-none"
+                size={14}
+                className="absolute pointer-events-none"
+                style={{ left: '9px', top: '50%', transform: 'translateY(-50%)', color: '#888' }}
               />
               <input
                 type="search"
                 placeholder="Search models..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 text-sm text-slate-800 bg-white border border-slate-200 rounded-xl outline-none focus:border-[#EB0A1E] focus:ring-2 focus:ring-red-100 transition-shadow"
-                aria-label="Search car models"
+                className="ci-search outline-none w-full"
+                style={{
+                  border: '0.5px solid #E0E0E0',
+                  borderRadius: '6px',
+                  padding: '6px 10px 6px 30px',
+                  fontSize: '12.5px',
+                  color: '#1A1A1A',
+                  backgroundColor: '#FAFAFA',
+                }}
+                aria-label="Search models"
               />
             </div>
-
-            <div className="flex flex-wrap items-center gap-2 flex-1">
-              <div className="flex items-center gap-1.5 text-[#737373]">
-                <IconFilter size={14} aria-hidden />
-                <span className="text-xs font-medium hidden sm:inline">Filters</span>
-              </div>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="text-sm py-2 pl-2.5 pr-8 bg-white border border-slate-200 rounded-xl text-slate-700 outline-none focus:border-[#EB0A1E] focus:ring-2 focus:ring-red-100"
-                aria-label="Filter by status"
-              >
-                <option value="all">All statuses</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-              <select
-                value={variantFilter}
-                onChange={(e) => setVariantFilter(e.target.value)}
-                className="text-sm py-2 pl-2.5 pr-8 bg-white border border-slate-200 rounded-xl text-slate-700 outline-none focus:border-[#EB0A1E] focus:ring-2 focus:ring-red-100 min-w-[120px]"
-                aria-label="Filter by variant"
-              >
-                <option value="all">All variants</option>
-                {variantOptions.map((v) => (
-                  <option key={v} value={v}>
-                    {toTitleCase(v)}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <AddModelButton
+              onClick={() => handleOpenModal()}
+              disabled={loading}
+              className="hidden md:inline-flex"
+            />
           </div>
         </div>
 
-        {/* Table body */}
         {loading ? (
-          <TableSkeleton />
+          <div className="p-8 text-center" style={{ fontSize: '13px', color: '#999' }}>
+            Loading models…
+          </div>
         ) : cars.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 px-6 text-center bg-gradient-to-b from-red-50/40 to-white">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-100 to-red-50 border border-red-200 flex items-center justify-center mb-4 shadow-inner">
-              <IconCar size={32} className="text-[#EB0A1E]" />
-            </div>
-            <h3 className="text-lg font-bold text-slate-900">No car models yet</h3>
-            <p className="text-sm text-slate-500 mt-1 max-w-sm">
-              Add your first vehicle model to start tracking inventory and incentives.
-            </p>
+          <div className="py-16 px-6 text-center">
+            <IconCar size={32} style={{ color: '#CCC', margin: '0 auto 12px' }} />
+            <p style={{ fontSize: '14px', color: '#666', fontWeight: 500 }}>No car models yet</p>
             <button
               type="button"
               onClick={() => handleOpenModal()}
-              className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white rounded-xl transition-all hover:shadow-lg hover:shadow-red-300/40"
-              style={{ background: 'linear-gradient(135deg, #EB0A1E, #c8071a)' }}
+              className="mt-4 inline-flex items-center gap-1.5"
+              style={{
+                backgroundColor: '#EB0A1E',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '6px',
+                padding: '7px 14px',
+                fontSize: '12.5px',
+                fontWeight: 500,
+              }}
             >
-              <IconPlus size={16} />
+              <IconPlus size={14} />
               Create first model
             </button>
           </div>
         ) : filteredCars.length === 0 ? (
-          <div className="py-14 px-6 text-center">
-            <p className="text-sm text-[#737373]">No models match your search or filters.</p>
-            <button
-              type="button"
-              onClick={() => {
-                setSearchQuery('');
-                setStatusFilter('all');
-                setVariantFilter('all');
-              }}
-              className="mt-3 text-sm font-medium text-[#EB0A1E] hover:underline"
-            >
-              Clear filters
-            </button>
+          <div className="py-12 text-center" style={{ fontSize: '13px', color: '#999' }}>
+            No models match your search.
           </div>
         ) : (
           <>
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[720px] border-collapse text-sm">
+            {/* Desktop / tablet table */}
+            <div className="ci-table-wrap overflow-x-auto">
+              <table className="w-full min-w-[600px]" style={{ borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr className="bg-gradient-to-r from-slate-100 to-slate-50 border-b border-slate-200">
-                    {['Model Name', 'Base Suffix', 'Variant', 'Status', ''].map((col) => (
+                  <tr style={{ backgroundColor: '#FAFAFA' }}>
+                    {['Model Name', 'Base Suffix', 'Variant', 'Status', 'Actions'].map((col) => (
                       <th
-                        key={col || 'actions'}
+                        key={col}
                         scope="col"
-                        className={`px-4 py-2.5 text-left text-[11px] font-bold uppercase tracking-wider text-slate-600 ${
-                          col === '' ? 'w-[52px]' : ''
-                        }`}
+                        className={col === 'Base Suffix' ? 'ci-col-suffix' : ''}
+                        style={{
+                          padding: '10px 16px',
+                          fontSize: '11.5px',
+                          fontWeight: 500,
+                          color: '#888',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.05em',
+                          borderBottom: '0.5px solid #F0F0F0',
+                          textAlign: 'left',
+                        }}
                       >
-                        {col || (
-                          <span className="sr-only">Actions</span>
-                        )}
+                        {col}
                       </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {paginatedCars.map((car, idx) => (
-                    <tr
-                      key={car.id}
-                      className={[
-                        'border-b border-slate-100 transition-colors',
-                        idx % 2 === 1 ? 'bg-slate-50/60' : 'bg-white',
-                        'hover:bg-red-50/50',
-                      ].join(' ')}
-                    >
-                      <td className="px-4 py-2.5">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-red-50 to-slate-100 border border-red-100/50 flex items-center justify-center shrink-0">
-                            <IconCar size={16} className="text-[#EB0A1E]" />
+                  {paginatedCars.map((car, idx) => {
+                    const isLast = idx === paginatedCars.length - 1;
+                    return (
+                      <tr
+                        key={car.id}
+                        className="ci-row group"
+                        onMouseEnter={(e) => {
+                          e.currentTarget.querySelectorAll('td').forEach((td) => {
+                            td.style.backgroundColor = '#FFF8F8';
+                          });
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.querySelectorAll('td').forEach((td) => {
+                            td.style.backgroundColor = '';
+                          });
+                        }}
+                      >
+                        <td
+                          style={{
+                            padding: '11px 16px',
+                            fontSize: '13px',
+                            borderBottom: isLast ? 'none' : '0.5px solid #F7F7F7',
+                          }}
+                        >
+                          <div className="flex items-center" style={{ gap: '10px' }}>
+                            <div
+                              className="flex items-center justify-center shrink-0 rounded-md"
+                              style={{
+                                width: '30px',
+                                height: '30px',
+                                backgroundColor: '#F4F4F4',
+                              }}
+                            >
+                              <IconCar size={15} style={{ color: '#888' }} />
+                            </div>
+                            <span style={{ fontWeight: 500, color: '#1A1A1A', fontSize: '13px' }}>
+                              {toTitleCase(car.name)}
+                            </span>
                           </div>
-                          <span className="font-semibold text-slate-900">
-                            {toTitleCase(car.name)}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-2.5 text-[#525252]">
-                        {car.base_suffix ? toTitleCase(car.base_suffix) : '—'}
-                      </td>
-                      <td className="px-4 py-2.5">
-                        {car.variant ? (
-                          <span className="inline-flex px-2.5 py-0.5 rounded-lg text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
-                            {toTitleCase(car.variant)}
-                          </span>
-                        ) : (
-                          <span className="text-[#A3A3A3]">—</span>
-                        )}
-                      </td>
-                      <td className="px-4 py-2.5">
-                        <StatusPill active={car.is_active !== false} />
-                      </td>
-                      <td className="px-4 py-2.5 text-right">
-                        <RowActionsMenu
-                          car={car}
-                          onEdit={handleOpenModal}
-                          onDelete={setShowDeleteConfirm}
-                        />
-                      </td>
-                    </tr>
-                  ))}
+                        </td>
+                        <td
+                          className="ci-col-suffix"
+                          style={{
+                            padding: '11px 16px',
+                            fontSize: '13px',
+                            color: '#666',
+                            borderBottom: isLast ? 'none' : '0.5px solid #F7F7F7',
+                          }}
+                        >
+                          {car.base_suffix || '—'}
+                        </td>
+                        <td
+                          style={{
+                            padding: '11px 16px',
+                            borderBottom: isLast ? 'none' : '0.5px solid #F7F7F7',
+                          }}
+                        >
+                          {car.variant ? (
+                            <span
+                              style={{
+                                backgroundColor: '#F0F4FF',
+                                color: '#185FA5',
+                                fontSize: '11px',
+                                padding: '2px 8px',
+                                borderRadius: '4px',
+                                fontWeight: 500,
+                              }}
+                            >
+                              {toTitleCase(car.variant)}
+                            </span>
+                          ) : (
+                            <span style={{ color: '#666', fontSize: '13px' }}>—</span>
+                          )}
+                        </td>
+                        <td
+                          style={{
+                            padding: '11px 16px',
+                            borderBottom: isLast ? 'none' : '0.5px solid #F7F7F7',
+                          }}
+                        >
+                          <StatusBadge active={car.is_active !== false} />
+                        </td>
+                        <td
+                          style={{
+                            padding: '11px 16px',
+                            borderBottom: isLast ? 'none' : '0.5px solid #F7F7F7',
+                          }}
+                        >
+                          <ActionButtons
+                            car={car}
+                            onEdit={handleOpenModal}
+                            onDelete={setShowDeleteConfirm}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
 
-            {/* Pagination */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-5 py-3.5 border-t border-slate-200 bg-slate-50">
-              <p className="text-sm text-slate-600 tabular-nums font-medium">
-                Showing {rangeStart}–{rangeEnd} of {filteredCars.length} models
-              </p>
-              <div className="flex items-center gap-2 justify-center sm:justify-end">
-                <button
-                  type="button"
+            {/* Mobile cards */}
+            <div className="ci-cards">
+              {paginatedCars.map((car) => (
+                <ModelCard
+                  key={car.id}
+                  car={car}
+                  onEdit={handleOpenModal}
+                  onDelete={setShowDeleteConfirm}
+                />
+              ))}
+            </div>
+
+            {/* Footer */}
+            <div
+              className="ci-footer flex flex-wrap items-center justify-between gap-3"
+              style={{
+                padding: '10px 16px',
+                borderTop: '0.5px solid #F0F0F0',
+                backgroundColor: '#FAFAFA',
+              }}
+            >
+              <span style={{ fontSize: '12px', color: '#999' }}>{footerCountText}</span>
+              <div className="flex items-center gap-1">
+                <PaginationBtn
+                  label="‹"
                   disabled={currentPage <= 1}
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-red-50 hover:border-red-200 hover:text-[#EB0A1E] disabled:opacity-40 disabled:pointer-events-none transition-colors"
-                  aria-label="Previous page"
-                >
-                  <IconChevronLeft size={14} />
-                  Previous
-                </button>
-                <span className="text-xs font-semibold text-[#EB0A1E] bg-red-50 px-3 py-1 rounded-lg border border-red-100 tabular-nums">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <button
-                  type="button"
+                  ariaLabel="Previous page"
+                />
+                {pageNumbers.map((page) => (
+                  <PaginationBtn
+                    key={page}
+                    label={String(page)}
+                    active={page === currentPage}
+                    onClick={() => setCurrentPage(page)}
+                  />
+                ))}
+                <PaginationBtn
+                  label="›"
                   disabled={currentPage >= totalPages}
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-red-50 hover:border-red-200 hover:text-[#EB0A1E] disabled:opacity-40 disabled:pointer-events-none transition-colors"
-                  aria-label="Next page"
-                >
-                  Next
-                  <IconChevronRight size={14} />
-                </button>
+                  ariaLabel="Next page"
+                />
               </div>
             </div>
           </>
@@ -664,7 +643,7 @@ export default function CarInventoryTab() {
 
       <Modal
         isOpen={!!showDeleteConfirm}
-        title="Delete car model?"
+        title="Confirm Delete"
         onClose={() => !saving && setShowDeleteConfirm(null)}
         actions={[
           <Button
@@ -683,15 +662,70 @@ export default function CarInventoryTab() {
             size="sm"
             disabled={saving}
           >
-            {saving ? 'Deleting...' : 'Delete model'}
+            {saving ? 'Deleting...' : 'Delete Car Model'}
           </Button>,
         ]}
       >
-        <p className="text-sm text-[#525252] leading-relaxed">
-          This will remove the model from active inventory. Historical sales data may still
-          reference it. This action cannot be undone.
+        <p style={{ fontSize: '14px', color: '#666' }}>
+          Are you sure you want to delete this car model? This action cannot be undone and may
+          affect historical data.
         </p>
       </Modal>
-    </div>
+    </>
+  );
+}
+
+function AddModelButton({ onClick, disabled, className = '' }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className={`items-center justify-center gap-1.5 shrink-0 transition-colors disabled:opacity-50 ${className}`}
+      style={{
+        backgroundColor: '#EB0A1E',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '6px',
+        padding: '7px 14px',
+        fontSize: '12.5px',
+        fontWeight: 500,
+        cursor: 'pointer',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = '#C8071A';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = '#EB0A1E';
+      }}
+    >
+      <IconPlus size={14} />
+      Add Model
+    </button>
+  );
+}
+
+function PaginationBtn({ label, onClick, disabled, active, ariaLabel }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={ariaLabel}
+      className="flex items-center justify-center transition-colors disabled:opacity-40"
+      style={{
+        width: '26px',
+        height: '26px',
+        border: '0.5px solid',
+        borderColor: active ? '#EB0A1E' : '#E0E0E0',
+        borderRadius: '5px',
+        backgroundColor: active ? '#EB0A1E' : '#fff',
+        fontSize: '12px',
+        color: active ? '#fff' : '#555',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+      }}
+    >
+      {label}
+    </button>
   );
 }

@@ -33,8 +33,8 @@ const MONTHS = [
 const YEARS = [2024, 2025, 2026];
 
 const NAV_ITEMS = [
-  { id: 'sales', label: 'Sales Entry', icon: IconLayoutGrid },
-  { id: 'breakdown', label: 'Incentive Breakdown', icon: IconBarChart },
+  { id: 'sales', label: 'Sales Entry', shortLabel: 'Sales', icon: IconLayoutGrid },
+  { id: 'breakdown', label: 'Incentive Breakdown', shortLabel: 'Pay', icon: IconBarChart },
 ];
 
 export default function OfficerDashboard() {

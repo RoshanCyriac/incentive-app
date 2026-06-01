@@ -18,11 +18,11 @@ import SlabEngineTab from './admin/SlabEngineTab';
 import OfficersTab from './admin/OfficersTab';
 
 const NAV_ITEMS = [
-  { id: 'dashboard', label: 'Dashboard', icon: IconLayoutGrid },
-  { id: 'cars', label: 'Car Inventory', icon: IconCar },
-  { id: 'slabs', label: 'Incentive Slabs', icon: IconBarChart },
-  { id: 'officers', label: 'Sales Officers', icon: IconUsers },
-  { id: 'settings', label: 'Settings', icon: IconSettings },
+  { id: 'dashboard', label: 'Dashboard', shortLabel: 'Home', icon: IconLayoutGrid },
+  { id: 'cars', label: 'Car Inventory', shortLabel: 'Cars', icon: IconCar },
+  { id: 'slabs', label: 'Incentive Slabs', shortLabel: 'Slabs', icon: IconBarChart },
+  { id: 'officers', label: 'Sales Officers', shortLabel: 'Team', icon: IconUsers },
+  { id: 'settings', label: 'Settings', shortLabel: 'Settings', icon: IconSettings },
 ];
 
 const TAB_HEADERS = {
@@ -63,7 +63,7 @@ export default function AdminDashboard() {
       userInitials={getUserInitials(displayName)}
       onLogout={logout}
       headerTitle={headerMeta.title}
-      headerTitleIcon={TitleIcon ? <TitleIcon size={18} /> : null}
+      headerTitleIcon={TitleIcon ? <TitleIcon size={16} /> : null}
       headerBreadcrumb={headerMeta.breadcrumb}
       welcomeName={displayName}
       roleBadge={roleLabel}
