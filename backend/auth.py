@@ -1,5 +1,6 @@
 import os
 import sys
+import logging
 from datetime import datetime, timedelta
 from typing import Optional
 
@@ -12,6 +13,9 @@ from sqlalchemy.orm import Session
 
 from database import get_db
 from models import User
+
+# Setup logging
+logger = logging.getLogger(__name__)
 
 # Load environment variables
 load_dotenv()
@@ -129,14 +133,17 @@ async def get_current_user(
     user = db.query(User).filter(User.email == email).first()
 
     if user is None:
+        logger.error(f"User not found in database for email: {email}")
         raise credentials_exception
 
     if not user.is_active:
+        logger.warning(f"User {email} is inactive")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="User is inactive",
         )
 
+    logger.debug(f"User authenticated: {email}, role: {user.role}")
     return user
 
 
@@ -153,7 +160,12 @@ async def require_admin(current_user: User = Depends(get_current_user)) -> User:
     Raises:
         HTTPException: 403 Forbidden if user is not admin
     """
-    if current_user.role != "admin":
+    # Strip whitespace from role as defensive measure
+    user_role = (current_user.role or "").strip().lower()
+    logger.debug(f"Checking admin access for user: {current_user.email}, role: '{user_role}'")
+    
+    if user_role != "admin":
+        logger.warning(f"Admin access denied for user {current_user.email} with role '{user_role}'")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Admin access required",
@@ -175,7 +187,9 @@ async def require_officer(current_user: User = Depends(get_current_user)) -> Use
     Raises:
         HTTPException: 403 Forbidden if user is not officer
     """
-    if current_user.role != "officer":
+    # Strip whitespace from role as defensive measure
+    user_role = (current_user.role or "").strip().lower()
+    if user_role != "officer":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Officer access required",
