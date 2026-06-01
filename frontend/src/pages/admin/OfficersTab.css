@@ -1,0 +1,245 @@
+/* Sales Officers — table refinements */
+
+.officers-page {
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.officers-page-header {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+@media (min-width: 640px) {
+  .officers-page-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+}
+
+.officers-page-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.officers-add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 14px;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.2;
+  background: #eb0a1e;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 150ms;
+  align-self: flex-start;
+}
+
+@media (min-width: 640px) {
+  .officers-add-btn {
+    align-self: center;
+  }
+}
+
+.officers-add-btn:hover:not(:disabled) {
+  background: #c8071a;
+}
+
+.officers-card {
+  background: #fff;
+  border: 0.5px solid #e5e5e5;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.officers-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.officers-table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.officers-table thead tr {
+  background: #fafafa;
+}
+
+.officers-table th {
+  padding: 10px 16px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 0.5px solid #f0f0f0;
+  white-space: nowrap;
+}
+
+.officers-table td {
+  padding: 10px 16px;
+  font-size: 13px;
+  color: #2a2a2a;
+  vertical-align: middle;
+  border-bottom: 0.5px solid #f7f7f7;
+}
+
+.officers-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.officers-table tbody tr {
+  transition: background 150ms;
+}
+
+.officers-table tbody tr:hover td {
+  background: #fff8f8;
+}
+
+.officers-col-name {
+  width: 32%;
+}
+
+.officers-col-email {
+  width: 34%;
+}
+
+.officers-col-status {
+  width: 14%;
+}
+
+.officers-col-joined {
+  width: 20%;
+}
+
+.officers-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.officers-avatar {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eb0a1e;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.officers-name-text {
+  font-weight: 500;
+  color: #1a1a1a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.officers-email {
+  color: #666;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.officers-joined {
+  color: #666;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.officers-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.officers-status-badge--active {
+  background: #eaf3de;
+  color: #27500a;
+}
+
+.officers-status-badge--active::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #3b6d11;
+  flex-shrink: 0;
+}
+
+.officers-status-badge--inactive {
+  background: #f1efe8;
+  color: #5f5e5a;
+}
+
+.officers-status-badge--inactive::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #5f5e5a;
+  flex-shrink: 0;
+}
+
+.officers-status-cell {
+  overflow: visible;
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .officers-table {
+    min-width: 640px;
+  }
+
+  .officers-col-name {
+    width: 30%;
+  }
+
+  .officers-col-email {
+    width: 36%;
+  }
+}
+
+@media (max-width: 639px) {
+  .officers-table {
+    min-width: 520px;
+  }
+
+  .officers-table th,
+  .officers-table td {
+    padding: 10px 12px;
+  }
+
+  .officers-col-status {
+    width: 18%;
+    min-width: 88px;
+  }
+}

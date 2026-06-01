@@ -3,12 +3,36 @@ import { getUsers, createUser } from '../../api/client';
 import {
   Button,
   Input,
-  Badge,
   Modal,
   Alert,
   SkeletonLoader,
   EmptyState,
 } from '../../components';
+import { IconPlus } from '../../components/icons';
+import './OfficersTab.css';
+
+function formatJoinedDate(value) {
+  if (value == null || value === '') return '—';
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return '—';
+  return date.toLocaleDateString('en-IN', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
+function OfficerStatusBadge({ active }) {
+  const className = active
+    ? 'officers-status-badge officers-status-badge--active'
+    : 'officers-status-badge officers-status-badge--inactive';
+  return <span className={className}>{active ? 'Active' : 'Inactive'}</span>;
+}
+
+function getInitials(name) {
+  if (!name || !name.trim()) return '?';
+  return name.trim().charAt(0).toUpperCase();
+}
 
 export default function OfficersTab() {
   const [officers, setOfficers] = useState([]);
@@ -85,14 +109,20 @@ export default function OfficersTab() {
     }
   };
 
+  const closeModal = () => {
+    setShowModal(false);
+    setFormData({ name: '', email: '', password: '' });
+    setFormErrors({});
+  };
+
   if (loading) {
     return (
-      <div>
-        <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-6">
-          <h2 className="text-xl font-header text-charcoal">Sales Officers</h2>
-          <div className="w-full sm:w-32 h-10 bg-off-white rounded-md shimmer"></div>
+      <div className="officers-page">
+        <div className="officers-page-header">
+          <h2 className="officers-page-title">Sales Officers</h2>
+          <div className="h-9 w-32 rounded-md bg-[#f4f4f4] animate-pulse" />
         </div>
-        <div className="card">
+        <div className="officers-card p-4">
           <SkeletonLoader rows={5} columns={4} />
         </div>
       </div>
@@ -100,61 +130,56 @@ export default function OfficersTab() {
   }
 
   return (
-    <div>
+    <div className="officers-page">
       {error && (
-        <div className="mb-6">
+        <div className="mb-4">
           <Alert type="error" message={error} onClose={() => setError(null)} />
         </div>
       )}
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-6">
-        <h2 className="text-xl font-header text-charcoal">Sales Officers</h2>
-        <Button variant="primary" onClick={() => setShowModal(true)} className="w-full sm:w-auto">
-          ➕ Create Officer
-        </Button>
+      <div className="officers-page-header">
+        <h2 className="officers-page-title">Sales Officers</h2>
+        <button type="button" className="officers-add-btn" onClick={() => setShowModal(true)}>
+          <IconPlus size={14} />
+          Create Officer
+        </button>
       </div>
 
-      {/* Table */}
       {officers.length > 0 ? (
-        <div className="table-container overflow-x-auto">
-          <table className="w-full min-w-[520px]">
-            <thead className="table-header sticky top-0">
-              <tr>
-                <th className="table-header-cell">Name</th>
-                <th className="table-header-cell">Email</th>
-                <th className="table-header-cell">Status</th>
-                <th className="table-header-cell">Joined</th>
-              </tr>
-            </thead>
-            <tbody>
-              {officers.map((officer, idx) => (
-                <tr key={officer.id} className={`${idx % 2 === 0 ? 'bg-white' : 'bg-off-white'} table-row`}>
-                  <td className="table-cell font-label text-charcoal">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-toyota-red rounded-full flex items-center justify-center text-white font-header text-sm flex-shrink-0">
-                        {officer.name.charAt(0).toUpperCase()}
-                      </div>
-                      <span>{officer.name}</span>
-                    </div>
-                  </td>
-                  <td className="table-cell text-gray-600">{officer.email}</td>
-                  <td className="table-cell">
-                    <Badge
-                      status={officer.is_active ? 'active' : 'inactive'}
-                      label={officer.is_active ? 'Active' : 'Inactive'}
-                    />
-                  </td>
-                  <td className="table-cell text-gray-600 text-sm">
-                    {new Date(officer.created_at).toLocaleDateString('en-IN', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric',
-                    })}
-                  </td>
+        <div className="officers-card">
+          <div className="officers-table-scroll">
+            <table className="officers-table">
+              <thead>
+                <tr>
+                  <th className="officers-col-name">Name</th>
+                  <th className="officers-col-email">Email</th>
+                  <th className="officers-col-status">Status</th>
+                  <th className="officers-col-joined">Joined</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {officers.map((officer) => (
+                  <tr key={officer.id}>
+                    <td>
+                      <div className="officers-name-cell">
+                        <div className="officers-avatar" aria-hidden="true">
+                          {getInitials(officer.name)}
+                        </div>
+                        <span className="officers-name-text">{officer.name}</span>
+                      </div>
+                    </td>
+                    <td className="officers-email">{officer.email}</td>
+                    <td className="officers-status-cell">
+                      <OfficerStatusBadge active={officer.is_active !== false} />
+                    </td>
+                    <td className="officers-joined">
+                      {formatJoinedDate(officer.created_at)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       ) : (
         <EmptyState
@@ -162,33 +187,20 @@ export default function OfficersTab() {
           title="No Sales Officers"
           message="Create your first sales officer to start tracking incentives and performance."
           action={
-            <Button variant="primary" onClick={() => setShowModal(true)}>
-              ➕ Create First Officer
-            </Button>
+            <button type="button" className="officers-add-btn" onClick={() => setShowModal(true)}>
+              <IconPlus size={14} />
+              Create First Officer
+            </button>
           }
         />
       )}
 
-      {/* Create Officer Modal */}
       <Modal
         isOpen={showModal}
         title="Create New Sales Officer"
-        onClose={() => {
-          setShowModal(false);
-          setFormData({ name: '', email: '', password: '' });
-          setFormErrors({});
-        }}
+        onClose={closeModal}
         actions={[
-          <Button
-            key="cancel"
-            variant="ghost"
-            onClick={() => {
-              setShowModal(false);
-              setFormData({ name: '', email: '', password: '' });
-              setFormErrors({});
-            }}
-            size="sm"
-          >
+          <Button key="cancel" variant="ghost" onClick={closeModal} size="sm">
             Cancel
           </Button>,
           <Button key="create" variant="primary" onClick={handleSubmit} size="sm">
@@ -230,9 +242,7 @@ export default function OfficersTab() {
               error={formErrors.password}
               required
             />
-            <p className="text-xs text-gray-500 mt-2">
-              Minimum 8 characters required
-            </p>
+            <p className="text-xs text-gray-500 mt-2">Minimum 8 characters required</p>
           </div>
         </form>
       </Modal>
