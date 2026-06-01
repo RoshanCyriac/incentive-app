@@ -8,13 +8,14 @@ https://toyota-incentive.duckdns.org
 
 | Field | Value |
 |-------|-------|
+| Email | `admin@toyota.com` |
 | Username | `admin` |
-| Password | `********` |
+| Password | `Admin@123` |
 
 ## Instructions
 
 1. Open the application URL.
-2. Log in using the admin credentials above.
+2. Log in with email `admin@toyota.com` and the password above.
 3. Navigate to the Admin Dashboard.
 4. Configure incentive slabs if required.
 5. Add officers and assign vehicle models.
@@ -40,8 +41,9 @@ https://toyota-incentive.duckdns.org
 
 | Field | Value |
 |-------|-------|
+| Email | `admin@toyota.com` |
 | Username | `admin` |
-| Password | `********` |
+| Password | `Admin@123` |
 
 **Please change the password after first login.**
 
