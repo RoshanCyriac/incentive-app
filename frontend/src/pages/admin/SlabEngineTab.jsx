@@ -6,6 +6,24 @@ import {
   deleteSlab,
 } from '../../api/client';
 import { Button, Input, Alert, SkeletonLoader, EmptyState } from '../../components';
+import { IconPlus, IconPencil, IconTrash } from '../../components/icons';
+import './SlabEngine.css';
+
+function formatIncentive(amount) {
+  return `₹${Math.round(amount).toLocaleString('en-IN')}`;
+}
+
+function SlabActionButton({ variant, onClick, children, ariaLabel }) {
+  const className =
+    variant === 'delete'
+      ? 'slab-action-btn slab-action-btn--delete'
+      : 'slab-action-btn slab-action-btn--edit';
+  return (
+    <button type="button" className={className} onClick={onClick} aria-label={ariaLabel}>
+      {children}
+    </button>
+  );
+}
 
 export default function SlabEngineTab() {
   const [slabs, setSlabs] = useState([]);
@@ -103,12 +121,12 @@ export default function SlabEngineTab() {
 
   if (loading) {
     return (
-      <div>
-        <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-6">
-          <h2 className="text-xl font-header text-charcoal">Incentive Slabs</h2>
-          <div className="w-full sm:w-32 h-10 bg-off-white rounded-md shimmer"></div>
+      <div className="slab-engine">
+        <div className="slab-page-header">
+          <h2 className="slab-page-title">Incentive Slabs</h2>
+          <div className="h-9 w-28 rounded-md bg-[#f4f4f4] animate-pulse" />
         </div>
-        <div className="card">
+        <div className="slab-card">
           <SkeletonLoader rows={4} columns={3} />
         </div>
       </div>
@@ -116,8 +134,7 @@ export default function SlabEngineTab() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Warning Banner */}
+    <div className="slab-engine space-y-4">
       {warnings.length > 0 && (
         <Alert type="warning" title="Configuration Issues">
           <ul className="space-y-1 mt-2">
@@ -134,57 +151,45 @@ export default function SlabEngineTab() {
         <Alert type="error" message={error} onClose={() => setError(null)} />
       )}
 
-      {/* Controls */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
-        <h2 className="text-xl font-header text-charcoal">Incentive Slabs</h2>
-        <Button variant="primary" onClick={handleAddSlab} className="w-full sm:w-auto">
-          ➕ Add Slab
-        </Button>
+      <div className="slab-page-header">
+        <h2 className="slab-page-title">Incentive Slabs</h2>
+        <button type="button" className="slab-add-btn" onClick={handleAddSlab}>
+          <IconPlus size={14} />
+          Add Slab
+        </button>
       </div>
 
-      {/* Visual Slab Builder */}
       {slabs.length > 0 ? (
-        <div className="space-y-4">
-          {/* Tier Cards */}
+        <div className="slab-list">
           {slabs.map((slab, index) => (
-            <div key={slab.id} className="relative">
-              {/* Connector Line */}
-              {index < slabs.length - 1 && (
-                <div className="absolute left-12 top-full w-1 h-6 bg-toyota-red -z-10"></div>
-              )}
-
-              <div className="card bg-white hover:shadow-lg transition-shadow">
+            <div key={slab.id} className="slab-card-wrap">
+              <div
+                className={`slab-card${editingId === slab.id ? ' slab-card--editing' : ''}`}
+              >
                 {editingId === slab.id ? (
-                  // Edit Mode
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-toyota-red rounded-full flex items-center justify-center text-white font-header text-sm">
-                        {index + 1}
-                      </div>
-                      <div className="flex-1">
-                        <span className="text-sm font-label text-charcoal">
-                          Slab {index + 1}
-                        </span>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
+                  <>
+                    <div className="slab-edit-header">
+                      <div className="slab-card-index">{index + 1}</div>
+                      <h3 className="slab-card-title">Slab {index + 1}</h3>
+                      <div className="slab-edit-actions">
+                        <SlabActionButton
+                          variant="edit"
                           onClick={() => setShowConfirmSave(true)}
+                          ariaLabel="Save slab"
                         >
-                          ✓ Save
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
+                          Save
+                        </SlabActionButton>
+                        <button
+                          type="button"
+                          className="slab-action-btn slab-action-btn--edit"
                           onClick={() => setEditingId(null)}
+                          aria-label="Cancel editing"
                         >
-                          ✕ Cancel
-                        </Button>
+                          Cancel
+                        </button>
                       </div>
                     </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4">
+                    <div className="slab-edit-fields">
                       <Input
                         label="Min Units"
                         type="number"
@@ -192,7 +197,7 @@ export default function SlabEngineTab() {
                         onChange={(e) =>
                           setEditFormData({
                             ...editFormData,
-                            min_qty: parseInt(e.target.value),
+                            min_qty: parseInt(e.target.value, 10),
                           })
                         }
                       />
@@ -204,7 +209,7 @@ export default function SlabEngineTab() {
                         onChange={(e) =>
                           setEditFormData({
                             ...editFormData,
-                            max_qty: e.target.value ? parseInt(e.target.value) : null,
+                            max_qty: e.target.value ? parseInt(e.target.value, 10) : null,
                           })
                         }
                       />
@@ -221,53 +226,46 @@ export default function SlabEngineTab() {
                         }
                       />
                     </div>
-                  </div>
+                  </>
                 ) : (
-                  // View Mode
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex items-center gap-4 flex-1 min-w-0">
-                      <div className="w-12 h-12 bg-off-white rounded-full flex items-center justify-center">
-                        <span className="text-lg font-header text-toyota-red">
-                          {index + 1}
-                        </span>
+                  <div className="slab-card-body">
+                    <div className="slab-card-main">
+                      <div className="slab-card-index" aria-hidden="true">
+                        {index + 1}
                       </div>
-
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="font-header text-charcoal">
-                            Slab {index + 1}
-                          </span>
-                          <span className="badge-active text-xs">Active</span>
+                      <div className="slab-card-info">
+                        <div className="slab-card-title-row">
+                          <h3 className="slab-card-title">Slab {index + 1}</h3>
+                          <span className="slab-status-badge">Active</span>
                         </div>
-                        <p className="text-sm text-gray-600">
+                        <p className="slab-card-range">
                           {slab.min_qty} – {slab.max_qty === null ? '∞' : slab.max_qty} cars
                         </p>
                       </div>
-
-                      <div className="text-right">
-                        <p className="text-2xl font-header text-toyota-red">
-                          ₹{Math.round(slab.incentive_per_car).toLocaleString('en-IN')}
-                        </p>
-                        <p className="text-xs text-gray-500 font-label">per car</p>
+                      <div className="slab-card-amount">
+                        <span className="slab-card-price">
+                          {formatIncentive(slab.incentive_per_car)}
+                        </span>
+                        <span className="slab-card-price-label">per car</span>
                       </div>
                     </div>
-
-                    <div className="flex gap-2 sm:ml-4 shrink-0">
-                      <Button
-                        variant="ghost"
-                        size="sm"
+                    <div className="slab-card-actions">
+                      <SlabActionButton
+                        variant="edit"
                         onClick={() => handleEdit(slab)}
+                        ariaLabel={`Edit slab ${index + 1}`}
                       >
-                        ✎ Edit
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
+                        <IconPencil size={13} />
+                        Edit
+                      </SlabActionButton>
+                      <SlabActionButton
+                        variant="delete"
                         onClick={() => handleDelete(slab.id)}
-                        className="text-status-error"
+                        ariaLabel={`Delete slab ${index + 1}`}
                       >
-                        🗑 Delete
-                      </Button>
+                        <IconTrash size={13} />
+                        Delete
+                      </SlabActionButton>
                     </div>
                   </div>
                 )}
@@ -275,18 +273,18 @@ export default function SlabEngineTab() {
             </div>
           ))}
 
-          {/* Confirmation Modal */}
           {showConfirmSave && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-              <div className="bg-white rounded-md p-6 max-w-sm mx-4 shadow-card">
-                <h3 className="text-lg font-header text-charcoal mb-3">
-                  ⚠️ Confirm Changes
-                </h3>
-                <p className="text-sm text-gray-600 mb-6">
-                  Updating slab configuration will affect all active calculations and
-                  incentive payouts. This action is immediate and cannot be undone.
+            <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+              <div
+                className="bg-white rounded-lg p-6 max-w-sm w-full"
+                style={{ border: '0.5px solid #e5e5e5' }}
+              >
+                <h3 className="text-base font-medium text-[#1A1A1A] mb-2">Confirm Changes</h3>
+                <p className="text-sm text-[#666] mb-5">
+                  Updating slab configuration will affect all active calculations and incentive
+                  payouts. This action is immediate and cannot be undone.
                 </p>
-                <div className="flex gap-3 justify-end">
+                <div className="flex gap-2 justify-end">
                   <Button
                     variant="secondary"
                     size="sm"
@@ -294,13 +292,13 @@ export default function SlabEngineTab() {
                   >
                     Cancel
                   </Button>
-                  <Button
-                    variant="primary"
-                    size="sm"
+                  <button
+                    type="button"
+                    className="slab-add-btn"
                     onClick={() => handleSave(editingId)}
                   >
                     Confirm Update
-                  </Button>
+                  </button>
                 </div>
               </div>
             </div>
@@ -312,9 +310,10 @@ export default function SlabEngineTab() {
           title="No Slabs Configured"
           message="Create incentive slabs to define how sales officers are rewarded based on performance."
           action={
-            <Button variant="primary" onClick={handleAddSlab}>
-              ➕ Create First Slab
-            </Button>
+            <button type="button" className="slab-add-btn" onClick={handleAddSlab}>
+              <IconPlus size={14} />
+              Create First Slab
+            </button>
           }
         />
       )}

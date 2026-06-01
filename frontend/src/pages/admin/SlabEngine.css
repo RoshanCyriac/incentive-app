@@ -1,0 +1,331 @@
+/* Incentive Slabs — layout refinements (structure unchanged) */
+
+.slab-engine {
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.slab-page-header {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+@media (min-width: 640px) {
+  .slab-page-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.slab-page-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.slab-add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 14px;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.2;
+  background: #eb0a1e;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 150ms;
+  align-self: flex-start;
+}
+
+@media (min-width: 640px) {
+  .slab-add-btn {
+    align-self: center;
+  }
+}
+
+.slab-add-btn:hover:not(:disabled) {
+  background: #c8071a;
+}
+
+.slab-add-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.slab-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .slab-list {
+    max-width: 960px;
+  }
+}
+
+.slab-card-wrap {
+  position: relative;
+}
+
+.slab-card {
+  background: #fff;
+  border: 0.5px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 12px 14px;
+  transition: background 150ms;
+}
+
+.slab-card:hover {
+  background: #fffafa;
+}
+
+.slab-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media (min-width: 640px) {
+  .slab-card-body {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+}
+
+.slab-card-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.slab-card-index {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f4f4f4;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #eb0a1e;
+  line-height: 1;
+  margin-top: 1px;
+}
+
+.slab-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.slab-card-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.slab-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.slab-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.3;
+  background: #eaf3de;
+  color: #27500a;
+  white-space: nowrap;
+}
+
+.slab-card-range {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.slab-card-amount {
+  flex-shrink: 0;
+  text-align: left;
+  padding-left: 38px;
+}
+
+@media (min-width: 640px) {
+  .slab-card-amount {
+    text-align: right;
+    padding-left: 12px;
+    margin-left: auto;
+  }
+}
+
+.slab-card-price {
+  display: block;
+  font-size: 20px;
+  font-weight: 600;
+  color: #eb0a1e;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.slab-card-price-label {
+  display: block;
+  font-size: 11px;
+  color: #888;
+  line-height: 1.3;
+  margin-top: 1px;
+}
+
+.slab-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding-left: 38px;
+}
+
+@media (min-width: 640px) {
+  .slab-card-actions {
+    padding-left: 0;
+  }
+}
+
+.slab-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 34px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 150ms, border-color 150ms, color 150ms;
+  font-family: inherit;
+  background: transparent;
+}
+
+.slab-action-btn--edit {
+  border: 0.5px solid #d0d0d0;
+  color: #444;
+}
+
+.slab-action-btn--edit:hover {
+  border-color: #185fa5;
+  color: #185fa5;
+  background: #f0f4ff;
+}
+
+.slab-action-btn--delete {
+  border: 0.5px solid #f0c0c0;
+  color: #a32d2d;
+}
+
+.slab-action-btn--delete:hover {
+  border-color: #e24b4a;
+  background: #fcebeb;
+}
+
+/* Edit mode */
+.slab-card--editing {
+  padding: 14px 16px;
+}
+
+.slab-edit-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.slab-edit-fields {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .slab-edit-fields {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .slab-edit-fields {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.slab-edit-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.slab-connector {
+  display: none;
+}
+
+/* Mobile: tighter stack */
+@media (max-width: 639px) {
+  .slab-card-main {
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .slab-card-amount {
+    width: 100%;
+    padding-left: 38px;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-top: 2px;
+  }
+
+  .slab-card-price {
+    font-size: 18px;
+  }
+
+  .slab-card-price-label {
+    display: inline;
+    margin-top: 0;
+  }
+
+  .slab-card-actions {
+    width: 100%;
+    padding-left: 0;
+    justify-content: flex-end;
+    margin-top: 2px;
+  }
+
+  .slab-action-btn {
+    flex: 1;
+    max-width: 140px;
+  }
+}
