@@ -15,7 +15,7 @@ from schemas import (
     SlabRuleUpdate,
     UserCreate,
     UserResponse,
-
+)
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
