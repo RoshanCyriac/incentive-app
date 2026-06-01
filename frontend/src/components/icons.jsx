@@ -69,6 +69,49 @@ export function IconSettings(props) {
   );
 }
 
+export function IconMail(props) {
+  return (
+    <Icon {...props}>
+      <rect x="3" y="5" width="18" height="14" rx="1" />
+      <path d="m3 7 9 6 9 6 9 6 9-6" />
+    </Icon>
+  );
+}
+
+export function IconLock(props) {
+  return (
+    <Icon {...props}>
+      <rect x="5" y="11" width="14" height="10" rx="2" />
+      <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+    </Icon>
+  );
+}
+
+export function IconShield(props) {
+  return (
+    <Icon {...props}>
+      <path d="M12 3 4 7v6c0 5 3.5 8 8 8s8-3 8-8V7l-8-4z" />
+    </Icon>
+  );
+}
+
+export function IconUser(props) {
+  return (
+    <Icon {...props}>
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+    </Icon>
+  );
+}
+
+export function IconLogIn(props) {
+  return (
+    <Icon {...props}>
+      <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" />
+    </Icon>
+  );
+}
+
 export function IconSearch(props) {
   return (
     <Icon {...props}>
